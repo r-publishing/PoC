@@ -19,3 +19,5 @@ Business Objectives:
 8. Setting up a new entity under which the PoC shall be delivered (RChain Publishing).
 9. Creation of an initial business plan with financials, market research, and USPs for the same entity beyond a PoC.
 10. Creation of assets/content in support of the business plan.
+
+This Closes issue #20
