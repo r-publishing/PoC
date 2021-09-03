@@ -7,7 +7,13 @@
   position: relative;
 }
 .upload-to-the-blockchain {
+  margin-top: 10px;
   margin-bottom: 10px;
+  color: var(--ion-color-primary);
+}
+
+.label {
+  color: var(--ion-color-primary);
 }
 
 .ButtonArray {
@@ -16,6 +22,16 @@
   top: 0;
   right: 0;
   margin: 1em;
+}
+
+ion-button.AddButton {
+  border-radius: 5px;
+  border-color: var(--ion-color-primary);
+  --box-shadow: none;
+  color: var(--ion-background-color);
+  margin: auto;
+  margin-right: 5px;
+  background: var(--ion-color-primary);
 }
 
 .inner {

@@ -43,7 +43,7 @@ interface ModalUploadDocumentProps extends RouteComponentProps {
   state: HistoryState;
   publicKey: string;
   bags: { [bagId: string]: Bag };
-  upload: (bagId: string, document: Document, did: string) => void;
+  upload: (bagId: string, document: Document, did: string, price: string) => void;
   platform: string;
   //recipient: string;
 }
@@ -53,6 +53,7 @@ interface ModalUploadDocumentState {
   dropErrors: string[];
   document: undefined | Document;
   platform: string;
+  price: string;
 }
 class ModalUploadDocumentComponent extends React.Component<
   ModalUploadDocumentProps,
@@ -67,6 +68,7 @@ class ModalUploadDocumentComponent extends React.Component<
       bagId: '',
       dropErrors: [],
       platform: props.platform,
+      price: '',
     };
   }
   dropEl: HTMLTextAreaElement | undefined = undefined;
@@ -165,6 +167,21 @@ class ModalUploadDocumentComponent extends React.Component<
     r.readAsDataURL(file);
   };
 
+  //  readURL = (input: { files: Blob[]; }) => {
+  //       if (input.files && input.files[0]) {
+  //           var reader = new FileReader();
+
+  //           reader.onload = function (e) {
+  //               $('#blah')
+  //                   .attr('src', e.target.result)
+  //                   .width(150)
+  //                   .height(200);
+  //           };
+
+  //           reader.readAsDataURL(input.files[0]);
+  //       }
+  //   }
+
   render() {
     return (
       <IonContent class="modal-document">
@@ -183,20 +200,43 @@ class ModalUploadDocumentComponent extends React.Component<
           </IonButton>
         </IonButtons>
 
-        <IonContent class="inner">
+        <IonContent className="inner">
           <IonItem>
-            <IonLabel position="floating">Document ID</IonLabel>
+            <IonLabel className="label" position="floating">
+              Enter name of document
+            </IonLabel>
             <IonInput
+              className="label"
               placeholder="document ID"
               type="text"
               value={this.state.bagId}
               onIonChange={e =>
-                this.setState({ bagId: (e.target as HTMLInputElement).value })
+                this.setState({
+                  bagId: (e.target as HTMLInputElement).value,
+                })
+              }
+            />
+          </IonItem>
+          <IonItem>
+            <IonLabel className="label" position="floating">
+              Enter price
+            </IonLabel>
+            <IonInput 
+              className="label"
+              placeholder="enter price of nft"
+              type="number"
+              value={this.state.price}
+              onIonChange={e =>
+                this.setState({
+                  price: (e.target as HTMLInputElement).value,
+                })
               }
             />
           </IonItem>
           {this.props.platform === 'web' ? (
-            <div className={`drop-area ${!!this.state.document ? 'hide' : ''}`}>
+            <div
+              className={`drop-area ${!!this.state.document ? 'hide' : ''}`}
+            >
               <textarea ref={this.saveRef} />
               <span>
                 <IonIcon icon={documentIcon} size="large" /> Drop your file
@@ -219,8 +259,11 @@ class ModalUploadDocumentComponent extends React.Component<
           )}
 
           <IonItem>
-            <IonLabel position="floating">Request signature from</IonLabel>
+            <IonLabel className="label" position="floating">
+              Request signature from
+            </IonLabel>
             <IonInput
+              className="label"
               placeholder="did:rchain:<registryUri>"
               type="text"
               value={this.state.recipient}
@@ -248,21 +291,21 @@ class ModalUploadDocumentComponent extends React.Component<
           {this.state.document ? (
             <IonItem>
               <IonButton
+                className="AddButton"
                 disabled={!this.state.document || !this.state.bagId}
-                size="default"
                 onClick={() => {
                   this.props.upload(
                     this.state.bagId,
                     this.state.document as Document,
-                    this.state.recipient as string
+                    this.state.recipient as string,
+                    this.state.price as string
                   );
                 }}
               >
                 Upload
               </IonButton>
               <IonButton
-                color="light"
-                size="default"
+                className="AddButton"
                 onClick={() => {
                   this.setState({ document: undefined });
                 }}
@@ -291,13 +334,14 @@ const ModalUploadDocument = connect(
   },
   (dispatch: Dispatch) => {
     return {
-      upload: (bagId: string, document: Document, did: string) => {
+      upload: (bagId: string, document: Document, did: string, price: string) => {
         dispatch({
           type: 'UPLOAD',
           payload: {
             bagId: bagId,
             document: document,
             recipient: did,
+            price: price
           },
         });
       },

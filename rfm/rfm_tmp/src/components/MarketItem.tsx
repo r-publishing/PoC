@@ -11,13 +11,13 @@ import {
 } from '@ionic/react';
 
 import { useHistory } from 'react-router';
-import { Bag, Document } from '../store';
-import './BagItem.scoped.css';
+import { State, Bag, Document, HistoryState } from '../store';
+import './MarketItem.scoped.css';
 
 import { document as documentIcon, trash, create } from 'ionicons/icons';
 import { bagIdFromAddress } from '../utils/bagIdFromAddress';
 
-interface BagItemProps {
+interface MarketItemProps {
   bag: Bag;
   registryUri: string;
   id: string;
@@ -27,13 +27,14 @@ interface BagItemProps {
   document: Document;
 }
 
-const BagItemComponent: React.FC<BagItemProps> = ({
+const MarketItemComponent: React.FC<MarketItemProps> = ({
   onlyCompleted,
   id,
   awaitsSignature,
   completed,
-  document
+  document,
 }) => {
+  console.log(document)
   const history = useHistory();
   return (
     <IonItemSliding className="container">
@@ -52,7 +53,11 @@ const BagItemComponent: React.FC<BagItemProps> = ({
         </IonItemOption>
       </IonItemOptions>
       <IonItem
-        className={`${(!onlyCompleted && Object.keys(document.signatures).length > 1) ? 'with-parent' : ''} ${completed ? 'success' : 'secondary'}`}
+        className={`${
+          !onlyCompleted && Object.keys(document.signatures).length > 1
+            ? 'with-parent'
+            : ''
+        } ${completed ? 'success' : 'secondary'}`}
         detail={false}
         button
         onClick={() => {
@@ -60,24 +65,24 @@ const BagItemComponent: React.FC<BagItemProps> = ({
         }}
       >
         <div className="IconContainer">
-          <IonIcon icon={documentIcon} color={completed ? 'success' : 'primary'} size="large" />
+          <IonIcon
+            icon={documentIcon}
+            color={completed ? 'success' : 'primary'}
+            size="large"
+          />
         </div>
         <IonLabel className="ion-text-wrap">
           <h2>{bagIdFromAddress(id)}</h2>
         </IonLabel>
-        {awaitsSignature && (
-          <IonButton className="AddButton">
-            Needs attestation
-          </IonButton>
-        )}
+        {!awaitsSignature && <span className="signature-ok">✓ verified</span>}
       </IonItem>
     </IonItemSliding>
   );
 };
 
-const BagItem = connect(
+const MarketItem = connect(
   undefined,
   undefined
-)(BagItemComponent);
+)(MarketItemComponent);
 
-export default BagItem;
+export default MarketItem;

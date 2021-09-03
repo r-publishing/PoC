@@ -15,7 +15,8 @@ import {
   IonIcon,
   IonSlides,
   IonSlide,
-  IonLabel
+  IonLabel,
+  IonSpinner
 } from '@ionic/react';
 import './App.scss';
 import './App.scoped.css';
@@ -31,18 +32,26 @@ import { Device } from "@capacitor/device";
 
 const LoginView = React.lazy(() => import('./views/LoginView'));
 const DockListView = React.lazy(() => import('./views/DocListView'));
+const PublicStore = React.lazy(() => import('./views/PublicStoreView'));
 
 interface AppProps {
   authorised: boolean;
   isLoading: boolean;
   registryUri: undefined | string;
   bags: { [id: string]: Bag };
-  init: (a: { registryUri: string; privateKey: string }) => void;
+  init: (a: { registryUri: string; privateKey: string; user: string }) => void;
   setPlatform: (platform: string) => void;
+  setUser: (user: string) => void;
 }
+
 const AppComponent: React.FC<AppProps> = props => {
   const redfill = React.useRef(null);
   const [showIdentity, setShowIdentity] = useState(false);
+
+  const identity: any = localStorage.getItem('user');
+
+    props.setUser(identity);
+    console.log(identity);
 
   const shortenName = () => {
     return "did:rchain:" + props.registryUri?.substring(0, 6) + "..." + props.registryUri?.substring(48, 54)
@@ -136,10 +145,11 @@ const AppComponent: React.FC<AppProps> = props => {
   }
 
   return (
+    
     <IonPage id="home-page">
       <IonHeader no-border className="ion-no-border RoundedHeader">
         <IonToolbar className="noSafeAreaPaddingTop">
-          <IonTitle className="main-title">RChain Publishing</IonTitle>
+          <IonTitle className="main-title">Arnold NFT</IonTitle>
           <IonButton
             slot="end"
             icon-only
@@ -163,7 +173,7 @@ const AppComponent: React.FC<AppProps> = props => {
           className={showIdentity ? 'RedFill show' : 'RedFill hide'}
           ref={redfill}
         >
-          <IonContent class="IdentityBG">
+          <IonContent className="IdentityBG">
             <div
               className={
                 showIdentity ? 'ProfilePanel show' : 'ProfilePanel hide'
@@ -189,7 +199,16 @@ const AppComponent: React.FC<AppProps> = props => {
         <RChainLogo className="BackgroundLogo" />
 
         {
-          props.authorised ? (
+          (identity) ? (
+                  <Suspense fallback={<IonLoading isOpen={true} />}>
+                    <PublicStore
+                      registryUri={props.registryUri as string}
+                      action="list"
+                    />
+                  </Suspense>
+          )
+            :
+            (
             <IonRouterOutlet id="main">
               <Route
                 exact
@@ -245,8 +264,6 @@ const AppComponent: React.FC<AppProps> = props => {
               />
             </IonRouterOutlet>
           )
-            :
-            undefined
         }
       </IonContent>
     </IonPage>
@@ -264,7 +281,7 @@ export const App = connect(
   },
   (dispatch: Dispatch) => {
     return {
-      init: (a: { registryUri: string; privateKey: string }) => {
+      init: (a: { registryUri: string; privateKey: string; user: string}) => {
         dispatch({
           type: 'INIT',
           payload: {
@@ -273,6 +290,7 @@ export const App = connect(
               a.privateKey as string
             ),
             registryUri: a.registryUri,
+            user: a.user
           },
         });
       },
@@ -284,6 +302,14 @@ export const App = connect(
           },
         });
       },
+      setUser: (user: string) => {
+        dispatch({
+          type: 'SET_USER',
+          payload: {
+            user: user,
+          }
+        })
+      }
     };
   }
 )(AppComponent);

@@ -118,7 +118,7 @@ const ModalDocumentComponent: React.FC<ModalDocumentProps> = (
         </IonToolbar>
       </IonHeader>
       */}
-      <IonContent class="modal-document">
+      <IonContent className="modal-document">
         <div className="TopLeftStrip"><IonButton className="DownloadButton" onClick={() => {
           doDownload();
         }}><IonIcon icon={downloadOutline} size="small" /><IonLabel>Download</IonLabel></IonButton></div>

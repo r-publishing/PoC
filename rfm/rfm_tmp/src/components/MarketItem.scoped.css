@@ -85,3 +85,10 @@ ion-button.AddButton {
   margin-right: 5px;
   background: var(--ion-color-primary);
 }
+
+.signature-ok {
+  background: #4b5;
+  margin-right: 10px;
+  padding: 10px 10px 10px 10px;
+  border-radius: 5px;
+}

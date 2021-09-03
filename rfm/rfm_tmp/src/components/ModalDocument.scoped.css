@@ -2,7 +2,7 @@
   width: 100vw;
   --offset-top: 0px;
   --offset-bottom: 0px;
-  --background: black;
+  --background: #fff;
 }
 
 .qrCodeContainer {

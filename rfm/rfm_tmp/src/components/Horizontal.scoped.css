@@ -4,17 +4,23 @@ ion-searchbar {
 
 .SearchBarContainer {
   margin-top: 1em;
+  background: var(--ion-background-color);
 }
 
 ion-button.AddButton {
-  border-style: solid;
-  border-color: var(--ion-color-secondary);
+  border-radius: 5px;
+  border-color: var(--ion-color-primary);
   --box-shadow: none;
-  color: var(--ion-color-secondary);
+  color: var(--ion-background-color);
   margin: auto;
   margin-right: 5px;
+  background: var(--ion-color-primary);
 }
 
 .connectedAs {
   font-weight: 400;
+}
+
+.container {
+  background: var(--ion-background-color);
 }

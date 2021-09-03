@@ -2,6 +2,7 @@ import { put, takeEvery } from 'redux-saga/effects';
 import * as rchainToolkit from 'rchain-toolkit';
 import { deflate } from 'pako';
 import { v4 } from 'uuid';
+import Swal from 'sweetalert2';
 
 import KeyResolver from 'key-did-resolver';
 import { getResolver as getRchainResolver } from 'rchain-did-resolver';
@@ -139,6 +140,13 @@ const reuploadBagData = function*(action: {
     payload: {},
   });
 
+  Swal.fire({
+    title: 'Success!',
+    text: 'document upload successful',
+    showConfirmButton: false,
+    timer: 2500,
+  });
+  window.location.reload();
   return true;
 };
 

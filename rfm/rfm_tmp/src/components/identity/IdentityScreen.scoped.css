@@ -25,3 +25,9 @@ ion-button.ActionButton {
   border: 5px solid transparent;
   box-shadow: 2px 2px 0px rgb(193 193 193);
 }
+
+.balance {
+  color: var(--ion-color-primary);
+  font-size: 1.2rem;
+  font-weight: bold;
+}

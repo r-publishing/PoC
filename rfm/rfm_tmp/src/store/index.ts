@@ -43,6 +43,7 @@ export interface State {
   platform: string;
 
   authorised: boolean;
+  user: string;
 }
 
 export type HistoryState = CombinedState<{
@@ -84,7 +85,8 @@ const initialState: State = {
   isLoading: false,
   searchText: '',
   platform: '',
-  authorised: false
+  authorised: false,
+  user: ''
 };
 
 const reducer = (
@@ -105,6 +107,7 @@ const reducer = (
         authorised: true,
         registryUri: action.payload.registryUri,
         publicKey: action.payload.publicKey,
+        user: action.payload.user
       };
     }
     case "ADD_IDENTITY": {
@@ -157,6 +160,12 @@ const reducer = (
         ...state,
         platform: action.payload.platform,
       };
+    }
+    case 'SET_USER': {
+      return {
+        ...state,
+        user: action.payload.user,
+      }
     }
     case 'SET_SEARCH_TEXT': {
       return {

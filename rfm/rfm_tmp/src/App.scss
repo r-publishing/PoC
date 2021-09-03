@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
+
 @font-face {
   font-family: fira;
   src: url('./fonts/FiraSans-Light.ttf');
@@ -24,7 +26,7 @@
 
 html,
 body {
-  font-family: fira;
+  font-family: 'Poppins', sans-serif;
   font-weight: 300;
 }
 
@@ -37,7 +39,7 @@ body {
 }
 
 .swiper-pagination-bullet-active {
-  background: var(--ion-color-secondary);
+  background: var(--ion-background-color);
 }
 
 .modal-wrapper.sc-ion-modal-md {

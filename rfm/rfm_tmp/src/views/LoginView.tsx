@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import * as rchainToolkit from 'rchain-toolkit';
 import React, { Suspense, useState, useEffect } from 'react';
 import { useHistory } from 'react-router';
+import { Link } from 'react-router-dom';
 import {
   IonContent,
   IonItem,
@@ -19,10 +20,7 @@ import {
 } from '@ionic/react';
 import './LoginView.scoped.css';
 import { HistoryState, getPlatform } from '../store';
-
-import NoIdentityScreen from '../components/identity/NoIdentityScreen';
-//import CreateIdentityScreen from "../components/identity/CreateIdentityScreen";
-import { ReactComponent as RChainLogo } from '../assets/rchain.svg';
+import { Users } from '../users/users';
 
 interface LoginViewProps {
   platform: string;
@@ -31,113 +29,88 @@ interface LoginViewProps {
     registryUri: string;
     privateKey: string;
     platform: string;
+    user: string;
   }) => void;
 }
 const LoginViewComponent: React.FC<LoginViewProps> = props => {
-  const history = useHistory();
-  const [privateKey, setPrivateKey] = useState<string>('');
-  const [registryUri, setRegstryUri] = useState<string>('');
 
-  const [devLogin, setDevLogin] = useState(false);
+  const handlePublisherLogin = async() => {
+    localStorage.removeItem('user');
+  
+    props.init({
+      registryUri: Users.publisher.REGISTRY_URI,
+      privateKey:
+        Users.publisher.PRIVATE_KEY,
+      platform: props.platform,
+      user: 'publisher'
+    });
+  }
 
-  const [maxSlide, setMaxSlide] = useState<string>('');
+  const handleAttestorLogin = async () => {
+    localStorage.removeItem('user');
 
-  const slideOpts: Record<string, unknown> = {
-    initialSlide: 0,
-    speed: 400,
+    props.init({
+      registryUri: Users.attestor.REGISTRY_URI,
+      privateKey: Users.attestor.PRIVATE_KEY,
+      platform: props.platform,
+      user: 'attestor',
+    });
   };
 
-  const CreateIdentityScreen = React.lazy(() =>
-    import('../components/identity/CreateIdentityScreen')
-  );
-  const RestoreIdentityScreen = React.lazy(() =>
-    import('../components/identity/RestoreIdentityScreen')
-  );
+  const handleBuyerLogin = async () => {
+    localStorage.setItem('user', 'buyer');
+
+    props.init({
+      registryUri: Users.publisher.REGISTRY_URI,
+      privateKey: Users.publisher.PRIVATE_KEY,
+      platform: props.platform,
+      user: 'buyer'
+    });
+  }
 
   return (
     <IonContent>
-      <IonSlides
-        class="Instructions"
-        options={slideOpts}
-        pager={true}
-        onIonSlideDidChange={(event: any) => console.info(event)}
-      >
+      <IonSlides>
         <IonSlide>
-          {devLogin ? (
-            <React.Fragment>
-              <div className="login">
-                <IonItem>
-                  <IonLabel position="floating">Address</IonLabel>
-                  <IonInput
-                    placeholder="address"
-                    type="text"
-                    value={registryUri}
-                    onIonChange={e =>
-                      setRegstryUri((e.target as HTMLInputElement).value)
-                    }
-                  />
-                </IonItem>
-                <IonItem>
-                  <IonLabel position="floating">Private key</IonLabel>
-                  <IonInput
-                    placeholder="Private key"
-                    type="password"
-                    value={privateKey}
-                    onIonChange={e =>
-                      setPrivateKey((e.target as HTMLInputElement).value)
-                    }
-                  />
-                </IonItem>
+          <React.Fragment>
+            <div className="login">
+              <h2>What would you like to do?</h2>
+
+              <div className="container">
+                {/* Publisher */}
                 <div className="LoadButtonDiv">
-                  <IonButton
-                    disabled={!privateKey || !registryUri}
+                  <IonButton 
                     onClick={async () => {
-                      props.init({
-                        registryUri: registryUri,
-                        privateKey: privateKey,
-                        platform: props.platform,
-                      });
+                      handlePublisherLogin();
                     }}
                   >
-                    Load
+                    Publish
+                  </IonButton>
+                </div>
+                {/* Attestor */}
+                <div className="LoadButtonDiv">
+                  <IonButton
+                    onClick={async () => {
+                      handleAttestorLogin();
+                    }}
+                  >
+                    Attest
+                  </IonButton>
+                </div>
+                {/* Buyer */}
+                <div className="LoadButtonDiv">
+                  <IonButton
+                    onClick={async () => {
+                      handleBuyerLogin();
+                    }}
+                  >
+                    Buy
                   </IonButton>
                 </div>
               </div>
-            </React.Fragment>
-          ) : (
-            <React.Fragment>
-              <NoIdentityScreen />
-            </React.Fragment>
-          )}
-          <div className="BottomBar">
-            <IonItem>
-              <IonLabel>Dev Login: </IonLabel>
-              <IonToggle
-                color="secondary"
-                checked={devLogin}
-                onIonChange={e => setDevLogin(e.detail.checked)}
-              />
-            </IonItem>
-          </div>
+            </div>
+          </React.Fragment>
         </IonSlide>
-        {props.action === 'new' ? (
-          <Suspense fallback={<IonLoading isOpen={true} />}>
-            <IonSlide>
-              <CreateIdentityScreen />
-            </IonSlide>
-          </Suspense>
-        ) : (
-          undefined
-        )}
-        {props.action === 'restore' ? (
-          <Suspense fallback={<IonLoading isOpen={true} />}>
-            <IonSlide>
-              <RestoreIdentityScreen />
-            </IonSlide>
-          </Suspense>
-        ) : (
-          undefined
-        )}
       </IonSlides>
     </IonContent>
   );
@@ -154,6 +127,7 @@ export const LoginView = connect(
         registryUri: string;
         privateKey: string;
         platform: string;
+        user: string
       }) => {
         dispatch({
           type: 'INIT',
@@ -165,11 +139,13 @@ export const LoginView = connect(
               a.privateKey as string
             ),
             registryUri: a.registryUri,
+            user: a.user
           },
         });
       },
     };
-  }
+  },
+  
 )(LoginViewComponent);
 
 export default LoginView;

@@ -2,6 +2,7 @@ import { put, takeEvery } from 'redux-saga/effects';
 import * as rchainToolkit from 'rchain-toolkit';
 import { deflate } from 'pako';
 import { v4 } from 'uuid';
+import Swal from 'sweetalert2';
 
 import KeyResolver from 'key-did-resolver';
 import { getResolver as getRchainResolver } from 'rchain-did-resolver';
@@ -18,9 +19,9 @@ const { purchaseTokensTerm } = require('rchain-token-files');
 
 const uploadBagData = function*(action: {
   type: string;
-  payload: { document: Document; bagId: string; recipient: string };
+  payload: { document: Document; bagId: string; recipient: string; price: number };
 }) {
-  console.log('uploload-bag-data', action.payload);
+  console.log('upload-bag-data', action.payload);
   let repipient = action.payload.recipient;
   const document = action.payload.document;
   const state: HistoryState = store.getState();
@@ -72,7 +73,7 @@ const uploadBagData = function*(action: {
     newBagId: action.payload.bagId,
     bagId: '0',
     quantity: 1,
-    price: 1,
+    price: action.payload.price,
     bagNonce: v4().replace(/-/g, ''),
     data: gzipped,
   };
@@ -113,6 +114,14 @@ const uploadBagData = function*(action: {
     payload: {},
   });
 
+  console.log(state);
+  Swal.fire({
+    title: 'Success!',
+    text: 'document upload successful',
+    showConfirmButton: false,
+    timer: 2500,
+  });
+  window.location.reload();
   return true;
 };
 

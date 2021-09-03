@@ -56,7 +56,7 @@
     "phonegap-plugin-barcodescanner": "^8.1.0",
     "qrcode": "^1.4.4",
     "rchain-did-resolver": "file:.yalc/rchain-did-resolver",
-    "rchain-token-files": "fabcotech/rchain-token#aaf8df2b9715608f307647989f5f8f3e24565bae",
+    "rchain-token-files": "fabcotech/rchain-token#68ed5cf2c7b39d7825efcc7ab7d1d7db27c64d53",
     "rchain-toolkit": "^0.2.8",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
@@ -68,6 +68,7 @@
     "redux": "^4.0.5",
     "redux-saga": "^1.1.3",
     "reselect": "^4.0.0",
+    "sweetalert2": "^11.1.4",
     "typescript": "3.8.3",
     "uuid": "3.4.0"
   },

@@ -49,7 +49,7 @@ const HorizontalComponent: React.FC<HorizontalProps> = props => {
         <IonItem class="connectedAs">Connected as {props.connected}</IonItem>
       </div>
       */}
-      <div>
+      <div className="container">
         <IonItem
           detail={false}
           no-padding
