@@ -1,0 +1,6 @@
+READ_ONLY_HOST=http://127.0.0.1:40403
+VALIDATOR_HOST=http://127.0.0.1:40403
+PRIVATE_KEY=6428f75c09db8b3a260fc1dcb1c93619bd3eecf6787b003ddc6ba5e87025c177
+MASTER_REGISTRY_URI=he59uhf4srukiqnmrtpeyax56tzgy3pwarwgqr5x3zza7c8d6yr6xa
+BOX_ID=publisher
+CONTRACT_ID=publisher

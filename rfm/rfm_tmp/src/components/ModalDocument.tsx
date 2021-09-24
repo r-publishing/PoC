@@ -6,7 +6,9 @@ import {
   IonButton,
   IonProgressBar,
   IonIcon,
-  IonLabel
+  IonLabel,
+  IonItem,
+  IonInput
 } from '@ionic/react';
 import { closeCircle, downloadOutline } from 'ionicons/icons';
 import { connect } from 'react-redux';
@@ -16,10 +18,10 @@ import { Page, pdfjs, Document as PdfDocument } from 'react-pdf';
 
 import QRCodeComponent from './QRCodeComponent';
 import checkSignature from '../utils/checkSignature';
-import { State, Document, HistoryState, getPlatform } from '../store';
+import { State, Folder, HistoryState, getPlatform } from '../store';
 
 import './ModalDocument.scoped.css';
-import { addressFromBagId } from 'src/utils/addressFromBagId';
+import { addressFromPurseId } from 'src/utils/addressFromPurseId';
 
 export interface KeyPair {
   privateKey: any;
@@ -34,8 +36,10 @@ interface ModalDocumentProps {
   bags: State['bags'];
   bagsData: State['bagsData'];
   platform: string;
+  user: string;
   loadBag: (registryUri: string, bagId: string, state: HistoryState) => void;
   reupload: (resitryUri: string, bagId: string) => void;
+  publish: (resitryUri: string, bagId: string, price: number) => void;
 }
 
 interface DocumentInfo {
@@ -50,6 +54,7 @@ const ModalDocumentComponent: React.FC<ModalDocumentProps> = (
   const [page, setPage] = useState<number>();
 
   const [numPages, setNumPages] = useState<number>();
+  const [price, setPrice] = useState<number>();
   function onDocumentLoadSuccess(docInfo: DocumentInfo) {
     setNumPages(docInfo.numPages);
   }
@@ -65,39 +70,48 @@ const ModalDocumentComponent: React.FC<ModalDocumentProps> = (
     return <IonProgressBar color="secondary" type="indeterminate" />;
   };
 
-  const address = addressFromBagId(props.registryUri, props.bagId);
+  const address = addressFromPurseId(props.registryUri, props.bagId);
+
+  const areSignaturesValid = async () => {
+    return new Promise<boolean>((resolve => {
+      Promise.all<boolean>(
+        Object.keys(folder.signatures).reduce((promises: Array<Promise<boolean>>, s) => {
+          return [checkSignature(folder, s), ...promises]
+        }, [])
+      ).then((values) => {
+          resolve(values.reduce((isSigned: boolean, item: boolean) => {
+            return item !== false && isSigned;
+          }, false))
+      })
+    }));
+  }
 
   const doDownload = () => {
     if (props.platform === "web") {
-      var fileUrl = "data:" + document.mimeType + ";base64," + document.data;
+      /* TODO
+      var fileUrl = "data:" + folder.mimeType + ";base64," + folder.data;
 
       fetch(fileUrl).then(response => response.blob()).then(blob => {
         const url = window.URL.createObjectURL(blob);
         const link = window.document.createElement("a");
         link.href = url;
-        const fileName = document.name;
+        const fileName = folder.name;
         link.setAttribute("download", fileName);
         window.document.body.appendChild(link);
         link.click();
       });
+      */
     }
     else {
       //TODO
     }
   };
 
-  const document = props.bagsData[address];
-  let signedDocument: Document | undefined;
-  if (document) {
-    signedDocument = {
-      ...document,
-      data: Buffer.from(document.data, 'utf-8').toString('base64'),
-    };
-  }
-  let lastSignature = undefined;
-  if (document && document.signatures) {
-    if (document.signatures['0']) lastSignature = '0';
-    if (document.signatures['1']) lastSignature = '1';
+  const folder = props.bagsData[address];
+  let lastSignature: string | undefined = undefined;
+  if (folder && folder.signatures) {
+    if (folder.signatures['0']) lastSignature = '0';
+    if (folder.signatures['1']) lastSignature = '1';
   }
 
   return (
@@ -119,12 +133,14 @@ const ModalDocumentComponent: React.FC<ModalDocumentProps> = (
       </IonHeader>
       */}
       <IonContent className="modal-document">
-        <div className="TopLeftStrip"><IonButton className="DownloadButton" onClick={() => {
+        {/* <div className="TopLeftStrip"><IonButton className="DownloadButton" onClick={() => {
           doDownload();
         }}><IonIcon icon={downloadOutline} size="small" /><IonLabel>Download</IonLabel></IonButton></div>
-        {document && 'application/pdf' === document.mimeType ? (
+        {
+        /* TODO
+        document && 'application/pdf' === folder.mimeType ? (
           <PdfDocument
-            file={'data:application/pdf;base64,' + document.data}
+            file={'data:application/pdf;base64,' + folder.data}
             loading={renderLoading}
             onLoadSuccess={onDocumentLoadSuccess}
           >
@@ -139,7 +155,8 @@ const ModalDocumentComponent: React.FC<ModalDocumentProps> = (
           </PdfDocument>
         ) : (
           <React.Fragment />
-        )}
+        )
+        */}
         {typeof document === 'undefined' ? (
           <IonLoading isOpen={true} />
         ) : (
@@ -157,12 +174,13 @@ const ModalDocumentComponent: React.FC<ModalDocumentProps> = (
           */
           undefined
         )}
-        {/* document ? (
+        {
+        /* document ? (
           <div className="ps5">
             <div className="document">
               <div className="left">
                 {['application/pdf'].includes(
-                  document.mimeType
+                  folder.mimeType
                 ) ? (
                     <div
                       className="pdf"
@@ -198,53 +216,92 @@ const ModalDocumentComponent: React.FC<ModalDocumentProps> = (
             Close
           </IonButton>
         </IonButtons>
-
-        {document && (
-          <div className="FloatingBottomLeft">
-            {['image/png', 'image/jpg', 'image/jpeg'].includes(
-                  document.mimeType
-                ) ? (
-                    <img
-                      alt={document.name}
-                      src={`data:${document.mimeType};base64, ${document.data}`}
-                    />
-                  ) : (
-                    <React.Fragment />
-                  )}
-            {Object.keys(document.signatures).map(s => {
-              return (
-                <p className="signature-line" key={s}>
-                  {checkSignature(signedDocument as Document, s) ? (
-                    <>
-                      <span className="signature-ok">✓</span>
-                      {`signature n°${s} verified (${document.signatures[
-                        s
-                      ].publicKey.slice(0, 12)}…)`}
-                    </>
-                  ) : (
-                    <>
-                      <span>✗</span>
-                      {`signature n°${s} invalid (${document.signatures[
-                        s
-                      ].publicKey.slice(0, 12)}…)`}
-                    </>
-                  )}
-                </p>
-              );
-            })}
-            {[undefined, '0'].includes(lastSignature) && (
-              <IonButton
-                className="SignatureRequiredBtn"
-                size="default"
-                onClick={() => {
-                  props.reupload(props.registryUri, props.bagId);
-                }}
-              >
-                Attest and Sign
-              </IonButton>
-            )}
+        <div className="FloatingBottomLeft">
+        <div className="Files">
+        {
+          Object.keys(folder.files).map(filename => {
+            const file = folder.files[filename];
+            return (
+              <div key={filename}>
+              {['image/png', 'image/jpg', 'image/jpeg'].includes(
+                    file.mimeType
+                  ) ? (
+                      <div className={`ImageFrame ${folder.mainFile === filename ? "main" : ""}`}>
+                        <img
+                          className="Image"
+                          alt={file.name}
+                          src={`data:${file.mimeType};base64, ${file.data}`}
+                        />
+                      </div>
+                    ) : (
+                      <React.Fragment />
+                    )}
+            </div>)
+          })
+          }
           </div>
-        )}
+              {Object.keys(folder.signatures).map(s => {
+                return (
+                  <p className="signature-line" key={s}>
+                    {checkSignature(folder, s) ? (
+                      <>
+                        <span className="signature-ok">✓</span>
+                        {`signature n°${s} verified (${folder.signatures[
+                          s
+                        ].publicKey.slice(0, 12)}…)`}
+                      </>
+                    ) : (
+                      <>
+                        <span>✗</span>
+                        {`signature n°${s} invalid (${folder.signatures[
+                          s
+                        ].publicKey.slice(0, 12)}…)`}
+                      </>
+                    )}
+                  </p>
+                );
+              })}
+                {
+                  areSignaturesValid() && props.user === "publisher" ? (
+                    <div>
+                    <IonItem>
+                      <IonLabel position="floating" color="primary">
+                        Enter price
+                      </IonLabel>
+                      <IonInput 
+                        color="primary"
+                        placeholder="enter price(in rev) of nft"
+                        type="number"
+                        value={price}
+                        onIonChange={e =>
+                          setPrice(parseInt((e.target as HTMLInputElement).value))
+                        }
+                      />
+                    </IonItem>
+                    <IonButton
+                      className="SignatureRequiredBtn"
+                      size="default"
+                      onClick={() => {
+                        props.publish(props.registryUri, props.bagId, price || 0);
+                      }}
+                    >
+                      Publish to Marketplace
+                    </IonButton>
+                    </div>
+                  ) : (<React.Fragment />)
+                }
+              {[undefined, '0'].includes(lastSignature) && (
+                <IonButton
+                  className="SignatureRequiredBtn"
+                  size="default"
+                  onClick={() => {
+                    props.reupload(props.registryUri, props.bagId);
+                  }}
+                >
+                  Attest and Sign
+                </IonButton>
+              )}
+            </div>
       </IonContent>
     </>
   );
@@ -257,6 +314,7 @@ const ModalDocument = connect(
       bagsData: state.reducer.bagsData,
       state: state,
       platform: getPlatform(state),
+      user: state.reducer.user
     };
   },
   (dispatch: Dispatch) => {
@@ -277,6 +335,16 @@ const ModalDocument = connect(
           payload: {
             bagId: bagId,
             registryUri: registryUri,
+          },
+        });
+      },
+      publish: (registryUri: string, bagId: string, price: number) => {
+        dispatch({
+          type: 'PUBLISH_BAG_DATA',
+          payload: {
+            bagId: bagId,
+            registryUri: registryUri,
+            price: price
           },
         });
       },

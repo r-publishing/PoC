@@ -1,7 +1,6 @@
 import { put, takeEvery } from 'redux-saga/effects';
 import * as rchainToolkit from 'rchain-toolkit';
 import { deflate } from 'pako';
-import { v4 } from 'uuid';
 import Swal from 'sweetalert2';
 
 import KeyResolver from 'key-did-resolver';
@@ -11,11 +10,11 @@ import { DID } from 'dids';
 import { parse } from 'did-resolver';
 import { encodeBase64 } from 'dids/lib/utils';
 
-import { Document, store, getBagsData } from '../';
+import { Folder, store, getBagsData } from '../';
 import replacer from '../../utils/replacer';
 import { getPrivateKey, HistoryState } from '../index';
 
-const { purchaseTokensTerm } = require('rchain-token-files');
+const { purchaseAndWithdrawTerm } = require('rchain-token');
 
 const reuploadBagData = function*(action: {
   type: string;
@@ -36,51 +35,51 @@ const reuploadBagData = function*(action: {
 
   yield did.authenticate({ provider: provider });
 
-  const document =
+  const folder =
     bagsData[`${action.payload.registryUri}/${action.payload.bagId}`];
-  if (!document) {
+  if (!folder) {
     console.error('bagData/document not found');
     return;
   }
 
   let i = '0';
+  let suffix = 'nft'
   let newBagId = action.payload.bagId;
-  if (!document.signatures['0']) {
-  } else if (!document.signatures['1']) {
+  if (!folder.signatures['0']) {
+  } else if (!folder.signatures['1']) {
     i = '1';
     newBagId = `${action.payload.bagId} ${parseInt(i, 10) + 1}`;
-  } else if (!document.signatures['2']) {
+  } else if (!folder.signatures['2']) {
     i = '2';
     newBagId = `${action.payload.bagId.slice(
       0,
       action.payload.bagId.length - 1
-    )} ${parseInt(i, 10) + 1}`;
+    )} ${suffix}`;
   } else {
     console.error('Signature 0, 1 and 2 are already on document');
     return;
   }
 
   const signedDocument = {
-    ...document,
-    data: Buffer.from(document.data, 'utf-8').toString('base64'),
-    date: document.date,
-    //parent: "did:rchain:" + addressFromBagId(action.payload.registryUri, action.payload.bagId),
+    ...folder,
+    date: folder.date,
   };
 
   const fileDocument = {
     ...signedDocument,
-  } as Document;
+  } as Folder;
 
-  let recipient;
+  let recipient = "";
   if (fileDocument.scheme) {
     recipient = fileDocument.scheme[parseInt(i) % 3];
-  } else {
-    recipient = 'did:rchain:' + state.reducer.registryUri;
   }
 
-  const parsedDid = parse(recipient);
-  const addr = parsedDid.id;
-
+  let toBoxId;
+  if (recipient) {
+    const parsedDid = parse(recipient);
+    toBoxId = parsedDid.path?.substring(1);
+  }
+  
   const { jws, linkedBlock } = yield did.createDagJWS(fileDocument);
   const jwe = yield did.createDagJWE(
     { jws: jws, data: encodeBase64(linkedBlock) },
@@ -92,24 +91,31 @@ const reuploadBagData = function*(action: {
     }
   );
 
+   
   const stringifiedJws = JSON.stringify(jwe, replacer);
   const deflatedJws = deflate(stringifiedJws);
   const gzipped = Buffer.from(deflatedJws).toString('base64');
 
+
   const payload = {
-    publicKey: publicKey,
-    newBagId: newBagId,
-    bagId: '0',
-    quantity: 1,
-    price: 1,
-    bagNonce: v4().replace(/-/g, ''),
-    data: gzipped,
-  };
+      masterRegistryUri: action.payload.registryUri,
+      purseId: '0',
+      contractId: `store`,
+      boxId: state.reducer.user,
+      toBoxId: toBoxId,
+      quantity: 1,
+      withdrawQuantity: 1,
+      data: gzipped,
+      newId: newBagId,
+      merge: true,
+      price: 1,
+      publicKey: publicKey,
+    }
 
   did.deauthenticate();
-
-  const term = purchaseTokensTerm(addr as string, payload);
-
+  
+  const term = purchaseAndWithdrawTerm(payload);
+  
   let validAfterBlockNumberResponse;
   try {
     validAfterBlockNumberResponse = JSON.parse(
@@ -121,7 +127,7 @@ const reuploadBagData = function*(action: {
     console.log(err);
     throw new Error('Unable to get last finalized block');
   }
-
+  
   const timestamp = new Date().getTime();
   const deployOptions = yield rchainToolkit.utils.getDeployOptions(
     'secp256k1',
@@ -141,12 +147,25 @@ const reuploadBagData = function*(action: {
   });
 
   Swal.fire({
-    title: 'Success!',
-    text: 'document upload successful',
+    text: 'Attestation is in progress',
     showConfirmButton: false,
-    timer: 2500,
+    timer: 30000,
   });
-  window.location.reload();
+
+
+ function notify() {
+        Swal.fire({
+            title: 'Success!',
+            text: 'Attestation complete',
+            showConfirmButton: false,
+            timer: 10000,
+        })
+    }
+    setTimeout(() => { notify() }, 30000);
+
+  setTimeout(() => {
+    window.location.reload();
+  }, 30000);
   return true;
 };
 

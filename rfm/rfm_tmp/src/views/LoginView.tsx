@@ -30,43 +30,65 @@ interface LoginViewProps {
     privateKey: string;
     platform: string;
     user: string;
+    store: string;
   }) => void;
 }
 const LoginViewComponent: React.FC<LoginViewProps> = props => {
 
   const handlePublisherLogin = async() => {
-    localStorage.removeItem('user');
+    //localStorage.removeItem('user');
+    localStorage.setItem('user', 'publisher');
+    localStorage.setItem('publisher', 'true')
   
     props.init({
       registryUri: Users.publisher.REGISTRY_URI,
       privateKey:
         Users.publisher.PRIVATE_KEY,
       platform: props.platform,
-      user: 'publisher'
+      user: 'publisher',
+      store: "store"
     });
   }
 
   const handleAttestorLogin = async () => {
-    localStorage.removeItem('user');
+    //localStorage.removeItem('user');
+    localStorage.removeItem('publisher');
+    localStorage.setItem('user', 'attestor');
 
     props.init({
       registryUri: Users.attestor.REGISTRY_URI,
       privateKey: Users.attestor.PRIVATE_KEY,
       platform: props.platform,
       user: 'attestor',
+      store: "store"
     });
   };
 
-  const handleBuyerLogin = async () => {
+  const handleStoreLogin = async () => {
     localStorage.setItem('user', 'buyer');
+    localStorage.removeItem('wallet');
 
     props.init({
-      registryUri: Users.publisher.REGISTRY_URI,
-      privateKey: Users.publisher.PRIVATE_KEY,
+      registryUri: Users.buyer.REGISTRY_URI,
+      privateKey: Users.buyer.PRIVATE_KEY,
       platform: props.platform,
-      user: 'buyer'
+      user: 'publisher',
+      store: "public_store"
     });
   }
+
+   const handleUserLogin = async () => {
+     localStorage.setItem('user', 'buyer');
+     localStorage.setItem('wallet', 'true');
+
+     props.init({
+       registryUri: Users.buyer.REGISTRY_URI,
+       privateKey: Users.buyer.PRIVATE_KEY,
+       platform: props.platform,
+       user: 'buyer',
+       store: "public_store"
+     });
+   };
 
   return (
     <IonContent>
@@ -79,7 +101,7 @@ const LoginViewComponent: React.FC<LoginViewProps> = props => {
               <div className="container">
                 {/* Publisher */}
                 <div className="LoadButtonDiv">
-                  <IonButton 
+                  <IonButton
                     onClick={async () => {
                       handlePublisherLogin();
                     }}
@@ -101,10 +123,20 @@ const LoginViewComponent: React.FC<LoginViewProps> = props => {
                 <div className="LoadButtonDiv">
                   <IonButton
                     onClick={async () => {
-                      handleBuyerLogin();
+                      handleStoreLogin();
                     }}
                   >
-                    Buy
+                    Marketplace
+                  </IonButton>
+                </div>
+                {/* wallet*/}
+                <div className="LoadButtonDiv">
+                  <IonButton
+                    onClick={async () => {
+                      handleUserLogin();
+                    }}
+                  >
+                    Owned NFTs
                   </IonButton>
                 </div>
               </div>
@@ -127,7 +159,8 @@ export const LoginView = connect(
         registryUri: string;
         privateKey: string;
         platform: string;
-        user: string
+        user: string;
+        store: string;
       }) => {
         dispatch({
           type: 'INIT',
@@ -139,7 +172,8 @@ export const LoginView = connect(
               a.privateKey as string
             ),
             registryUri: a.registryUri,
-            user: a.user
+            user: a.user,
+            store: a.store
           },
         });
       },

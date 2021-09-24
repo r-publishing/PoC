@@ -12,28 +12,26 @@ import './IdentityScreen.scoped.css';
 
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
-import { HistoryState } from '../../store';
+import { HistoryState, store } from '../../store';
 import QRCodeComponent from '../QRCodeComponent';
 import { Users } from '../../users/users';
 //import Avatar from '../../assets/avatar.jpg';
 
 interface IdentityScreenComponentProps {
   registryUri: string | undefined;
+  user: string | undefined;
+  publicKey: string;
 }
 const IdentityScreenComponent: React.FC<IdentityScreenComponentProps> = (props) => {
-  const [balance, setBalance] = useState("0");
+  const [balance, setBalance] = useState<number>();
+  const state: HistoryState = store.getState();
 
-  const PRIVATE_KEY =
-    Users.buyer.PRIVATE_KEY;
-  const PUBLIC_KEY = rchainToolkit.utils.publicKeyFromPrivateKey(PRIVATE_KEY);
   const READ_ONLY_HOST = 'http://localhost:40403';
-  const VALIDATOR_HOST = 'http://localhost:40403';
-
   const main = async () => {
     const term = `new return, rl(\`rho:registry:lookup\`), RevVaultCh, vaultCh, balanceCh in {
     rl!(\`rho:rchain:revVault\`, *RevVaultCh) |
     for (@(_, RevVault) <- RevVaultCh) {
-      @RevVault!("findOrCreate", "${rchainToolkit.utils.revAddressFromPublicKey(PUBLIC_KEY)}", *vaultCh) |
+      @RevVault!("findOrCreate", "${rchainToolkit.utils.revAddressFromPublicKey(props.publicKey)}", *vaultCh) |
       for (@(true, vault) <- vaultCh) {
         @vault!("balance", *balanceCh) |
         for (@balance <- balanceCh) { return!(balance) }
@@ -47,8 +45,9 @@ const IdentityScreenComponent: React.FC<IdentityScreenComponentProps> = (props) 
       });
 
       const data = rchainToolkit.utils.rhoValToJs(JSON.parse(result).expr[0]);
-      console.log(data);
-      setBalance(data);
+      const revBalance = data * (1 / 100000000);
+      console.log(revBalance);
+      setBalance(revBalance);
     } catch (e) {
       return "error";
     }
@@ -60,7 +59,7 @@ const IdentityScreenComponent: React.FC<IdentityScreenComponentProps> = (props) 
   }
 
   const qrCodeContent = () => {
-    return `did:rchain:${props.registryUri}`;
+    return `did:rchain:${props.registryUri}/${props.user}`;
   }
 
   return (
@@ -72,15 +71,15 @@ const IdentityScreenComponent: React.FC<IdentityScreenComponentProps> = (props) 
         />
         <IonRow>
           <IonCol>
-            <IonLabel>NFT Buyer</IonLabel>
+            <IonLabel>{props.user}</IonLabel>
           </IonCol>
         </IonRow>
-        <IonRow>
+        {/* <IonRow>
           <IonCol>
             {(props.registryUri ? <IonLabel>{shortenName()}</IonLabel> : undefined)}
           </IonCol>
-        </IonRow>
-        <IonRow>
+        </IonRow> */}
+        {/* <IonRow>
           <IonCol>
             <IonButton color="primary">Backup Identity</IonButton>
           </IonCol>
@@ -89,10 +88,10 @@ const IdentityScreenComponent: React.FC<IdentityScreenComponentProps> = (props) 
           <IonCol>
             <IonButton color="primary">Remove Identity</IonButton>
           </IonCol>
-        </IonRow>
+        </IonRow> */}
         <IonRow>
           <IonCol>
-            <IonLabel>Wallet Balance: <p className="balance">{ balance }</p></IonLabel>
+            <IonLabel>REV Balance: <p className="balance">{ balance }</p></IonLabel>
           </IonCol>
         </IonRow>
       </IonGrid>
@@ -103,7 +102,9 @@ const IdentityScreenComponent: React.FC<IdentityScreenComponentProps> = (props) 
 const IdentityScreen = connect(
   (state: HistoryState) => {
     return {
-      registryUri: state.reducer.registryUri
+      registryUri: state.reducer.registryUri,
+      user: state.reducer.user,
+      publicKey: state.reducer.publicKey? state.reducer.publicKey : "",
     }
   },
   (dispatch: Dispatch) => { }

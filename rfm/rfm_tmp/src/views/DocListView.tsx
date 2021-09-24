@@ -68,6 +68,8 @@ interface DockListViewProps {
 const DockListViewComponent: React.FC<DockListViewProps> = props => {
   const history = useHistory();
 
+  const identity = localStorage.getItem('publisher');
+
   const scanQRCode = () => {
     (window as any).cordova.plugins.barcodeScanner.scan(
       (result: any) => {
@@ -122,6 +124,7 @@ const DockListViewComponent: React.FC<DockListViewProps> = props => {
   }
 
   return (
+    
     <IonContent>
       {props.platform !== 'web' ? (
         <IonFab vertical="bottom" horizontal="end" slot="fixed">
@@ -148,7 +151,7 @@ const DockListViewComponent: React.FC<DockListViewProps> = props => {
                     registryUri={props.registryUri}
                     id={address}
                     bag={props.bags[address]}
-                    document={props.bagsData[address]}
+                    folder={props.bagsData[address]}
                     onlyCompleted={false}
                     awaitsSignature={
                       !!props.documentsAwaitingSignature[address]
@@ -164,6 +167,16 @@ const DockListViewComponent: React.FC<DockListViewProps> = props => {
       ) : (
         undefined
       )}
+
+      <div>
+        {
+          (identity) ? (
+            <h2>Publisher balance: </h2>
+          ) : (
+              undefined
+          )
+        }
+      </div>
     </IonContent>
   );
 };

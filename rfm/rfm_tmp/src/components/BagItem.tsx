@@ -11,7 +11,7 @@ import {
 } from '@ionic/react';
 
 import { useHistory } from 'react-router';
-import { Bag, Document } from '../store';
+import { Bag, Folder } from '../store';
 import './BagItem.scoped.css';
 
 import { document as documentIcon, trash, create } from 'ionicons/icons';
@@ -24,7 +24,7 @@ interface BagItemProps {
   awaitsSignature: boolean;
   completed: boolean;
   onlyCompleted: boolean;
-  document: Document;
+  folder: Folder;
 }
 
 const BagItemComponent: React.FC<BagItemProps> = ({
@@ -32,7 +32,7 @@ const BagItemComponent: React.FC<BagItemProps> = ({
   id,
   awaitsSignature,
   completed,
-  document
+  folder
 }) => {
   const history = useHistory();
   return (
@@ -52,7 +52,7 @@ const BagItemComponent: React.FC<BagItemProps> = ({
         </IonItemOption>
       </IonItemOptions>
       <IonItem
-        className={`${(!onlyCompleted && Object.keys(document.signatures).length > 1) ? 'with-parent' : ''} ${completed ? 'success' : 'secondary'}`}
+        className={`${(!onlyCompleted && Object.keys(folder.signatures).length > 1) ? 'with-parent' : ''} ${completed ? 'success' : 'secondary'}`}
         detail={false}
         button
         onClick={() => {

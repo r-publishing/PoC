@@ -1,0 +1,27 @@
+{
+  "netflix": [
+    "api-global.netflix.com",
+    "ftl.netflix.com",
+    "prod.ftl.netflix.com",
+    "nrdp.prod.ftl.netflix.com",
+    "ichnaea.netflix.com",
+    "netflix.net",
+    "partner.netflix.net",
+    "prod.partner.netflix.net",
+    "preapp.prod.partner.netflix.net",
+    "prod.netflix.com",
+    "push.prod.netflix.com"
+  ],
+  "microsoft": [
+    "data.microsoft.com",
+    "events.data.microsoft.com",
+    "settings-win.data.microsoft.com"
+  ],
+  "windowsupdate": [
+    "ctldl.windowsupdate.com"
+  ],
+  "google": [
+    "www.google.com",
+    "google"
+  ]
+}

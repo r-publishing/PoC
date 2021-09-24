@@ -1,6 +1,6 @@
 {
   "name": "rchain-did-resolver",
-  "version": "2.1.2+58470c52",
+  "version": "2.1.2+3540ecda",
   "description": "Resolve DID documents from rchain testnet",
   "main": "lib/rchain-did-resolver.js",
   "types": "lib/rchain-did-resolver.d.ts",
@@ -54,8 +54,8 @@
   "dependencies": {
     "elliptic": "^6.5.4",
     "pako": "^2.0.3",
-    "rchain-token-files": "fabcotech/rchain-token#aaf8df2b9715608f307647989f5f8f3e24565bae",
-    "rchain-toolkit": "^0.2.8",
+    "rchain-token": "https://github.com/fabcotech/rchain-token.git",
+    "rchain-toolkit": "^0.3.2",
     "uint8arrays": "^1.1.0"
   }
 }

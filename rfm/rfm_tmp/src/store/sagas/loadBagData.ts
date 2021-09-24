@@ -1,7 +1,7 @@
 import { takeEvery, put } from 'redux-saga/effects';
 
-import { addressFromBagId } from '../../utils/addressFromBagId';
-import { store, State, Document, getPrivateKey } from '../../store/';
+import { addressFromPurseId } from '../../utils/addressFromPurseId';
+import { store, State, Document, getPrivateKey } from '../../store/'
 
 import { CombinedState } from 'redux';
 import { RouterState } from 'connected-react-router';
@@ -12,7 +12,6 @@ import { Secp256k1Provider } from 'key-did-provider-secp256k1';
 import { DID, DagJWS } from 'dids';
 import { decodeBase64 } from 'dids/lib/utils';
 import dagCBOR from 'ipld-dag-cbor';
-const { readBagOrTokenDataTerm } = require('rchain-token-files');
 
 const loadBagData = function*(action: { type: string; payload: any }) {
   console.log('load-bag-data', action.payload);
@@ -20,7 +19,7 @@ const loadBagData = function*(action: { type: string; payload: any }) {
     router: RouterState<unknown>;
     reducer: State;
   }> = store.getState();
-  const docAddr = addressFromBagId(
+  const docAddr = addressFromPurseId(
     action.payload.registryUri,
     action.payload.bagId
   );
@@ -64,7 +63,7 @@ const loadBagData = function*(action: { type: string; payload: any }) {
       yield put({
         type: 'SAVE_BAG_DATA_COMPLETED',
         payload: {
-          bagId: addressFromBagId(
+          bagId: addressFromPurseId(
             action.payload.registryUri,
             action.payload.bagId
           ),
@@ -84,6 +83,7 @@ const loadBagData = function*(action: { type: string; payload: any }) {
       },
     });
   }
+  console.log("payload data", action.payload);
 
   did.deauthenticate();
 

@@ -1,0 +1,31 @@
+{
+  "name": "rchain-token",
+  "version": "10.0.0+2ba75bdd",
+  "description": "Fungibles and non-fungibles tokens on the RChain blockchain",
+  "main": "src/index.js",
+  "scripts": {
+    "generate": "node generateJavascripts",
+    "build:browser": "npx rollup -c",
+    "test": "npm run test test:fungibles && npm run test:non-fungibles",
+    "test:ft": "node tests-ft/index",
+    "test:nft": "node tests-nft/index",
+    "dappy:namesystem": "node cli deploy --fungible false --contract-id dappynamesystem && node cli create-purse --new-id 0 --price 50000000 --quantity 100000000 --type 0",
+    "dappy:namesystemanddefaults": "npm run dappy:namesystem && node cli create-purse --purses-file name-purses.json"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fabcotech/rchain-token.git"
+  },
+  "author": "FABCO",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/fabcotech/rchain-token/issues"
+  },
+  "homepage": "https://github.com/fabcotech/rchain-token#readme",
+  "dependencies": {
+    "blakejs": "^1.1.0",
+    "dotenv": "6.2.0",
+    "rchain-toolkit": "0.3.2",
+    "uuid": "3.4.0"
+  }
+}

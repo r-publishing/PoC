@@ -3,7 +3,7 @@ import * as rchainToolkit from 'rchain-toolkit';
 import {CombinedState} from 'redux';
 
 import { store, State, Bag, AccountStorage, Document, Signature, getPrivateKey } from '..';
-import { addressFromBagId } from '../../utils/addressFromBagId';
+//import { addressFromPurseId } from '../../utils/addressFromPurseId';
 import { inflate } from 'pako';
 
 import { push, RouterState } from 'connected-react-router';
@@ -19,13 +19,13 @@ import { DID, DagJWS } from 'dids';
 import { decodeBase64 } from 'dids/lib/utils'
 import dagCBOR from 'ipld-dag-cbor'
 import { JWE } from 'did-jwt'
-
+/*
 const {
   readBagsTerm,
   readBagsOrTokensDataTerm,
   read,
 } = require('rchain-token-files');
-
+*/
 const refresh = function* (action: { type: string; payload: any}) {
   const state : CombinedState<{ router: RouterState<unknown>; reducer: State; }> = store.getState();
   
@@ -41,7 +41,7 @@ const refresh = function* (action: { type: string; payload: any}) {
   const pubKey = rchainToolkit.utils.publicKeyFromPrivateKey(
     privateKey as string
   )
-
+/*
   const term1 = readBagsTerm(action.payload.registryUri);
   const ed1 = yield rchainToolkit.http.exploreDeploy(
     state.reducer.readOnlyUrl,
@@ -66,6 +66,7 @@ const refresh = function* (action: { type: string; payload: any}) {
       term: term3
     }
   )
+  */
 
   const did = new DID({ resolver: { ...yield getRchainResolver(), ...KeyResolver.getResolver() } })
   const authSecret = Buffer.from(privateKey, 'hex');
@@ -86,21 +87,22 @@ const refresh = function* (action: { type: string; payload: any}) {
       }
     );
   }
-
+  /*
   yield put(
     {
       type: "INIT_COMPLETED",
       payload: {
-        nonce: rchainTokenValues.nonce,
+        //nonce: rchainTokenValues.nonce,
         contractPublicKey: rchainTokenValues.publicKey,
       }
     }
   );
+  
 
   const bags = rchainToolkit.utils.rhoValToJs(JSON.parse(ed1).expr[0]);
   const newBags: { [address: string]: Bag } = {};
   Object.keys(bags).forEach(bagId => {
-    newBags[addressFromBagId(action.payload.registryUri as string, bagId)] = bags[bagId];
+    newBags[addressFromPurseId(action.payload.registryUri as string, bagId)] = bags[bagId];
   });
   yield put(
     {
@@ -145,7 +147,7 @@ const refresh = function* (action: { type: string; payload: any}) {
         const signatureCount = Object.keys(fileAsJson.signatures).length;
         fileAsJson.signatures[signatureCount] = signature;
         
-        newBagsData[addressFromBagId(action.payload.registryUri as string, bagId)] = fileAsJson;
+        newBagsData[addressFromPurseId(action.payload.registryUri as string, bagId)] = fileAsJson;
       }
       catch(err) {
         console.info("Unable to verify. " + err);
@@ -154,15 +156,17 @@ const refresh = function* (action: { type: string; payload: any}) {
     }
 
   });
+  */
 
   did.deauthenticate();
-
+  /*
   yield put(
     {
       type: "SAVE_BAGS_DATA_COMPLETED",
       payload: newBagsData
     }
   );
+  */
 
   yield put(
     {

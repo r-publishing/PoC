@@ -22,11 +22,9 @@ import {
   State,
   HistoryState,
 } from '../store';
-import Horizontal from '../components/Horizontal';
 import MarketItem from '../components/MarketItem';
 import DummyBagItem from '../components/dummy/DummyBagItem';
 import ModalDocument from '../components/ModalDocument';
-import ModalUploadDocument from '../components/ModalUploadDocument';
 
 import { parse } from 'did-resolver';
 import './PublicStore.scoped.css';
@@ -47,8 +45,10 @@ interface PublicDocumentView {
 }
 
 const PublicStoreComponent: React.FC<PublicDocumentView> = props => {
-  console.log(props);
+  console.log("public store", props);
 
+  const identity = localStorage.getItem('wallet');
+  console.log(identity);
   const history = useHistory();
 
   const scanQRCode = () => {
@@ -98,7 +98,11 @@ const PublicStoreComponent: React.FC<PublicDocumentView> = props => {
 
   return (
     <div className="public-store">
-      <h2>NFT Marketplace</h2>
+      {
+        (identity) ? (
+          <h2>My NFTs</h2>
+        ) : (
+        <h2>NFT Marketplace</h2>)}
       <IonContent>
         {props.platform !== 'web' ? (
           <IonFab vertical="bottom" horizontal="end" slot="fixed">
@@ -124,13 +128,10 @@ const PublicStoreComponent: React.FC<PublicDocumentView> = props => {
                       registryUri={props.registryUri}
                       id={address}
                       bag={props.bags[address]}
-                      document={props.bagsData[address]}
+                      folder={props.bagsData[address]}
                       onlyCompleted={false}
-                      awaitsSignature={
-                        !!props.documentsAwaitingSignature[address]
-                      }
-                      completed={!!props.documentsCompleted[address]}
-                    />
+                      awaitsSignature={!!props.documentsAwaitingSignature[address]}
+                      completed={!!props.documentsCompleted[address]}                   />
                   );
                 })
               : [...Array(10)].map((x, i) => (

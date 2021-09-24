@@ -2,9 +2,7 @@ import React from 'react';
 import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
 import {
-  IonHeader,
   IonContent,
-  IonToolbar,
   IonTitle,
   IonItem,
   IonLabel,
@@ -12,13 +10,18 @@ import {
   IonIcon,
   IonButtons,
   IonButton,
+  IonItemSliding,
+  IonItemOptions,
+  IonItemOption,
+  IonSelect,
+  IonSelectOption
 } from '@ionic/react';
-import { document as documentIcon } from 'ionicons/icons';
+import { document as documentIcon, trash, create } from 'ionicons/icons';
 import { useHistory, RouteComponentProps } from 'react-router';
 
 import {
   Bag,
-  Document,
+  Folder,
   getBags,
   getBagsData,
   getPublicKey,
@@ -43,18 +46,28 @@ interface ModalUploadDocumentProps extends RouteComponentProps {
   state: HistoryState;
   publicKey: string;
   bags: { [bagId: string]: Bag };
-  upload: (bagId: string, document: Document, did: string, price: string) => void;
+  upload: (bagId: string, folder: Folder, did: string, files: any/*, price: string*/) => void;
   platform: string;
   //recipient: string;
 }
 interface ModalUploadDocumentState {
   recipient: string;
+  mainFile: string;
   bagId: string;
   dropErrors: string[];
-  document: undefined | Document;
+  folder: undefined | Folder;
+  files: undefined | any;
   platform: string;
-  price: string;
+  //price: string;
 }
+
+let folder: Folder = {
+  signatures: {},
+  date: new Date().toUTCString(),
+  files: {},
+  mainFile: ""
+};
+
 class ModalUploadDocumentComponent extends React.Component<
   ModalUploadDocumentProps,
   ModalUploadDocumentState
@@ -63,12 +76,13 @@ class ModalUploadDocumentComponent extends React.Component<
     super(props);
 
     this.state = {
-      document: undefined,
+      folder: undefined,
       recipient: '',
+      mainFile: '',
       bagId: '',
       dropErrors: [],
       platform: props.platform,
-      price: '',
+      files: {}
     };
   }
   dropEl: HTMLTextAreaElement | undefined = undefined;
@@ -97,16 +111,23 @@ class ModalUploadDocumentComponent extends React.Component<
 
     const asbase: string = (await this.blobToBase64(fileBlob)) as string;
 
-    const document: Document = {
-      name: file0.name,
-      mimeType: fileBlob.type,
-      data: Buffer.from(asbase.split(',')[1]).toString('base64'),
+    const folder: Folder = {
       signatures: {},
       date: new Date().toUTCString(),
-    };
+      files: {
+        [file0.name]: {
+          name: file0.name,
+          mimeType: fileBlob.type,
+          data: Buffer.from(asbase.split(',')[1]).toString('base64'),
+        }
+      },
+      mainFile: ""
+    }
+
+    folder.mainFile = folder.mainFile || Object.keys(folder.files)[0];
 
     that.setState({
-      document: document,
+      folder: {...folder},
     });
   };
 
@@ -132,39 +153,46 @@ class ModalUploadDocumentComponent extends React.Component<
       });
       return;
     }
-    if (files[1]) {
-      this.setState({
-        dropErrors: ['Please drop only one file'],
-      });
-      return;
-    }
 
     this.setState({ dropErrors: [] });
-    const file = files[0];
-    var r = new FileReader();
-    try {
-      r.onloadend = async function(e) {
-        if (!e || !e.target || typeof r.result !== 'string') {
-          return;
-        }
 
-        const document: Document = {
-          name: file.name,
-          mimeType: file.type,
-          data: Buffer.from(r.result.split(',')[1]).toString('base64'),
-          signatures: {},
-          date: new Date().toUTCString(),
+    Array.from(files).map(file => {
+      var r = new FileReader();
+      try {
+        r.onloadend = async function(e) {
+          if (!e || !e.target || typeof r.result !== 'string') {
+            return;
+          }
+
+          that.setState({
+            files: {
+              ...that.state.files,
+              [file.name]: {
+                name: file.name,
+                mimeType: file.type,
+                data: r.result.split(',')[1],
+              }
+            },
+          });
+  
         };
+      } catch (e) {
+        this.setState({ dropErrors: ['Error parsing file'] });
+      }
+  
+      r.readAsDataURL(file);
+    })
 
-        that.setState({
-          document: document,
-        });
-      };
-    } catch (e) {
-      this.setState({ dropErrors: ['Error parsing file'] });
-    }
-
-    r.readAsDataURL(file);
+    //folder.files = this.state.files;
+    //folder.mainFile = folder.mainFile || Object.keys(files)[0];
+  
+    that.setState({
+      folder: {
+        ...folder,
+        mainFile: folder.mainFile || Object.keys(files)[0]
+      }
+    });
+    
   };
 
   //  readURL = (input: { files: Blob[]; }) => {
@@ -217,31 +245,27 @@ class ModalUploadDocumentComponent extends React.Component<
               }
             />
           </IonItem>
-          <IonItem>
-            <IonLabel className="label" position="floating">
-              Enter price
-            </IonLabel>
-            <IonInput 
-              className="label"
-              placeholder="enter price of nft"
-              type="number"
-              value={this.state.price}
-              onIonChange={e =>
-                this.setState({
-                  price: (e.target as HTMLInputElement).value,
-                })
-              }
-            />
-          </IonItem>
+         
+            <IonItem>
+              <IonLabel className="label">Request signature from:</IonLabel>
+              <IonSelect color="primary" className="label" value={this.state.recipient} okText="Okay" cancelText="Dismiss" onIonChange={e => 
+                  this.setState({
+                    recipient: (e.target as HTMLInputElement).value,
+                  })
+              }>
+                <IonSelectOption value="attestor">Attestor</IonSelectOption>
+              </IonSelect>
+            </IonItem>
+
           {this.props.platform === 'web' ? (
             <div
-              className={`drop-area ${!!this.state.document ? 'hide' : ''}`}
+              className={`drop-area ${!!this.state.folder ? '' : ''}`}
             >
               <textarea ref={this.saveRef} />
-              <span>
-                <IonIcon icon={documentIcon} size="large" /> Drop your file
-              </span>
-            </div>
+                <span>
+                  <IonIcon icon={documentIcon} size="large" /> Drop your file
+                </span>
+              </div>
           ) : (
             undefined
           )}
@@ -258,24 +282,63 @@ class ModalUploadDocumentComponent extends React.Component<
             undefined
           )}
 
-          <IonItem>
-            <IonLabel className="label" position="floating">
-              Request signature from
-            </IonLabel>
-            <IonInput
-              className="label"
-              placeholder="did:rchain:<registryUri>"
-              type="text"
-              value={this.state.recipient}
-              onIonChange={e =>
-                this.setState({
-                  recipient: (e.target as HTMLInputElement).value,
-                })
-              }
-            />
-          </IonItem>
+{
+            Object.keys(this.state?.files || {}).map(filename => {
+              const file = this.state.files[filename];
+              if (file) {
+                return (
+                  <IonItemSliding className="container" key={filename}>
+                  <IonItemOptions side="end">
+                    <IonItemOption
+                      color="danger"
+                      onClick={() => {
+                        this.setState({
+                          files: Object.keys(this.state?.files)
+                          .filter(key => key !== filename)
+                          .reduce((obj: any, key) => {
+                            obj[key] = this.state?.files[key];
+                            return obj;
+                          }, {})
+                        })
+                      }}
+                    >
+                      <IonIcon icon={trash} size="large" />
+                    </IonItemOption>
+                  </IonItemOptions>
+                  <IonItem
+                    detail={false}
+                    button
+                    onClick={() => {
+                      console.info("click on item");
+                    }}
+                  >
+                    <div className="IconContainer">
+                      <IonIcon icon={documentIcon} size="large" color="primary"/>
+                    </div>
+                    <IonLabel className="ion-text-wrap" color="primary">
+                      <h2>{filename}</h2>
+                    </IonLabel>
+                  </IonItem>
+                </IonItemSliding>
+                )}
+            })
+            }
 
-          {this.state.document ? (
+            <IonItem>
+              <IonLabel className="label">Main file:</IonLabel>
+              <IonSelect color="primary" className="label" value={this.state.mainFile} okText="Okay" cancelText="Dismiss" onIonChange={e => 
+                  this.setState({
+                    mainFile: (e.target as HTMLInputElement).value,
+                  })
+              }>
+                {Object.keys(this.state?.files || {}).map(filename => {
+                    return(<IonSelectOption value={filename} key={filename}>{filename}</IonSelectOption>)
+                  })
+                }
+              </IonSelect>
+            </IonItem>
+
+          { /*this.state.folder ? (
             <div className="document">
               <div className="left">
                 <IonIcon icon={documentIcon} size="large" />
@@ -287,18 +350,18 @@ class ModalUploadDocumentComponent extends React.Component<
             </div>
           ) : (
             undefined
-          )}
-          {this.state.document ? (
+          ) */}
+          {this.state.folder ? (
             <IonItem>
               <IonButton
                 className="AddButton"
-                disabled={!this.state.document || !this.state.bagId}
+                disabled={!this.state.folder || !this.state.bagId || !this.state.mainFile}
                 onClick={() => {
                   this.props.upload(
                     this.state.bagId,
-                    this.state.document as Document,
+                    this.state.folder as Folder,
                     this.state.recipient as string,
-                    this.state.price as string
+                    this.state.files
                   );
                 }}
               >
@@ -307,7 +370,7 @@ class ModalUploadDocumentComponent extends React.Component<
               <IonButton
                 className="AddButton"
                 onClick={() => {
-                  this.setState({ document: undefined });
+                  this.setState({ folder: undefined });
                 }}
               >
                 Cancel
@@ -334,14 +397,16 @@ const ModalUploadDocument = connect(
   },
   (dispatch: Dispatch) => {
     return {
-      upload: (bagId: string, document: Document, did: string, price: string) => {
+      upload: (bagId: string, folder: Folder, did: string, files: any/*, price: string*/) => {
         dispatch({
           type: 'UPLOAD',
           payload: {
             bagId: bagId,
-            document: document,
-            recipient: did,
-            price: price
+            folder: {
+              ...folder,
+              files: files
+            },
+            recipient: did
           },
         });
       },

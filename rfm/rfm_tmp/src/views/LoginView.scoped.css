@@ -1,6 +1,6 @@
 .container {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
 }
 
 ion-slides {
@@ -8,7 +8,7 @@ ion-slides {
 }
 
 .login {
-  background-color: #CCCCC4;
+  /*background-color: #CCCCC4;*/
   padding: 20px 20px 20px 20px;
   border-radius: 5px;
 }
@@ -47,10 +47,11 @@ div.BottomBar {
 }
 
 .LoadButtonDiv {
-  text-align: left;
+  /*text-align: left;*/
   padding: 10px 10px 10px 10px;
 }
 
 .LoadButtonDiv ion-button {
   font-family: 'Poppins', sans-serif;
+  width: 100%;
 }

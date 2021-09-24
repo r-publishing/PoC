@@ -38,6 +38,7 @@ interface AppProps {
   authorised: boolean;
   isLoading: boolean;
   registryUri: undefined | string;
+  user: string;
   bags: { [id: string]: Bag };
   init: (a: { registryUri: string; privateKey: string; user: string }) => void;
   setPlatform: (platform: string) => void;
@@ -48,7 +49,7 @@ const AppComponent: React.FC<AppProps> = props => {
   const redfill = React.useRef(null);
   const [showIdentity, setShowIdentity] = useState(false);
 
-  const identity: any = localStorage.getItem('user');
+  const identity: any = localStorage.getItem('user'); //TODO
 
     props.setUser(identity);
     console.log(identity);
@@ -147,7 +148,7 @@ const AppComponent: React.FC<AppProps> = props => {
   return (
     
     <IonPage id="home-page">
-      <IonHeader no-border className="ion-no-border RoundedHeader">
+      <IonHeader no-border no-shadow className="ion-no-border">
         <IonToolbar className="noSafeAreaPaddingTop">
           <IonTitle className="main-title">Arnold NFT</IonTitle>
           <IonButton
@@ -163,7 +164,7 @@ const AppComponent: React.FC<AppProps> = props => {
               <IonIcon icon={closeCircleOutline} size="large" />
             ) : (
                 <div className="UserInfo" >
-                  <IonLabel>{shortenName()}</IonLabel>
+                  <IonLabel>{props.user}</IonLabel>
                   <IonIcon icon={personCircle} size="large" />
                 </div>
               )}
@@ -199,7 +200,7 @@ const AppComponent: React.FC<AppProps> = props => {
         <RChainLogo className="BackgroundLogo" />
 
         {
-          (identity) ? (
+          (identity === "buyer") ? (
                   <Suspense fallback={<IonLoading isOpen={true} />}>
                     <PublicStore
                       registryUri={props.registryUri as string}
@@ -275,6 +276,7 @@ export const App = connect(
     return {
       authorised: state.reducer.authorised,
       registryUri: state.reducer.registryUri,
+      user: state.reducer.user,
       bags: state.reducer.bags,
       isLoading: state.reducer.isLoading,
     };

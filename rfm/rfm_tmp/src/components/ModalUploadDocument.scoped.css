@@ -54,7 +54,7 @@ ion-button.AddButton {
   max-width: 400px;
 }
 .drop-area.hide {
-  display: none;
+  /*display: none;*/
 }
 .drop-area span {
   z-index: 1;
