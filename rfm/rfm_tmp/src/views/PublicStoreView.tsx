@@ -5,7 +5,7 @@ import { useHistory } from 'react-router';
 
 import {
   IonContent,
-  IonProgressBar,
+  //IonProgressBar,
   IonFab,
   IonFabButton,
   IonIcon,
@@ -45,10 +45,7 @@ interface PublicDocumentView {
 }
 
 const PublicStoreComponent: React.FC<PublicDocumentView> = props => {
-  console.log("public store", props);
-
   const identity = localStorage.getItem('wallet');
-  console.log(identity);
   const history = useHistory();
 
   const scanQRCode = () => {

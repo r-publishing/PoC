@@ -26,7 +26,7 @@ const {
   readPursesTerm,
   readBoxTerm,
   readPursesDataTerm,
-  readConfigTerm
+  //readConfigTerm
 } = require("rchain-token")
 
 const load = function* (action: { type: string; payload: any}) {

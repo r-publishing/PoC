@@ -16,7 +16,7 @@ import {
   IonSelect,
   IonSelectOption
 } from '@ionic/react';
-import { document as documentIcon, trash, create } from 'ionicons/icons';
+import { document as documentIcon, trash, /* create */ } from 'ionicons/icons';
 import { useHistory, RouteComponentProps } from 'react-router';
 
 import {

@@ -8,6 +8,7 @@ import {
   IonItemOptions,
   IonItemOption,
   IonButton,
+  /*
   IonPage,
   IonHeader,
   IonCard,
@@ -18,16 +19,16 @@ import {
   IonCardContent,
   IonContent,
   IonCardHeader
-
+  */
 } from '@ionic/react';
-import { Card, Button } from 'react-bootstrap';
+//import { Card, Button } from 'react-bootstrap';
 
-import { useHistory } from 'react-router';
+//import { useHistory } from 'react-router';
 import { Dispatch } from 'redux';
 import { Bag, Folder, HistoryState } from '../store';
 import './MarketItem.scoped.css';
 
-import { document as documentIcon, trash, create, checkmarkCircle, pin, wifi, wine, warning, walk } from 'ionicons/icons';
+import { /*document as documentIcon,*/ trash, create, checkmarkCircle } from 'ionicons/icons';
 import { bagIdFromAddress } from '../utils/bagIdFromAddress';
 
 interface MarketItemProps {
@@ -45,7 +46,7 @@ const MarketItemComponent: React.FC<MarketItemProps> = (
   props: MarketItemProps,
 ) => {
   const identity = localStorage.getItem('wallet');
-  const history = useHistory();
+  //const history = useHistory();
 
   return (
     <IonItemSliding className="container">

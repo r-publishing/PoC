@@ -1,22 +1,22 @@
 import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
 import * as rchainToolkit from 'rchain-toolkit';
-import React, { Suspense, useState, useEffect } from 'react';
-import { useHistory } from 'react-router';
-import { Link } from 'react-router-dom';
+import React, { /* Suspense, useState, useEffect */ } from 'react';
+//import { useHistory } from 'react-router';
+//import { Link } from 'react-router-dom';
 import {
   IonContent,
-  IonItem,
-  IonInput,
-  IonLabel,
+  //IonItem,
+  //IonInput,
+  //IonLabel,
   IonButton,
   IonSlides,
   IonSlide,
-  IonGrid,
-  IonRow,
-  IonCol,
-  IonToggle,
-  IonLoading,
+  //IonGrid,
+  //IonRow,
+  //IonCol,
+  //IonToggle,
+  //IonLoading,
 } from '@ionic/react';
 import './LoginView.scoped.css';
 import { HistoryState, getPlatform } from '../store';

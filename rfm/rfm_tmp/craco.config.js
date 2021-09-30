@@ -1,4 +1,5 @@
 const path = require('path');
+const { ESLINT_MODES } = require("@craco/craco");
 
 module.exports = {
   plugins: [
@@ -6,6 +7,14 @@ module.exports = {
       plugin: require('craco-plugin-scoped-css'),
     },
   ],
+  eslint: {
+    mode: ESLINT_MODES.extends,
+    configure: {
+      rules: {
+        "no-unused-vars": "off"
+      }
+    }
+  },
   /*
     eslint: {
       mode: ESLINT_MODES.extends,

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import * as rchainToolkit from 'rchain-toolkit';
 import {
   IonLabel,
-  IonButton,
+  //IonButton,
   IonSlide,
   IonGrid,
   IonRow,
@@ -12,9 +12,9 @@ import './IdentityScreen.scoped.css';
 
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
-import { HistoryState, store } from '../../store';
+import { HistoryState /*, store */ } from '../../store';
 import QRCodeComponent from '../QRCodeComponent';
-import { Users } from '../../users/users';
+//import { Users } from '../../users/users';
 //import Avatar from '../../assets/avatar.jpg';
 
 interface IdentityScreenComponentProps {
@@ -24,7 +24,7 @@ interface IdentityScreenComponentProps {
 }
 const IdentityScreenComponent: React.FC<IdentityScreenComponentProps> = (props) => {
   const [balance, setBalance] = useState<number>();
-  const state: HistoryState = store.getState();
+  //const state: HistoryState = store.getState();
 
   const READ_ONLY_HOST = 'http://158.177.6.32:40403';
   const main = async () => {
@@ -53,10 +53,11 @@ const IdentityScreenComponent: React.FC<IdentityScreenComponentProps> = (props) 
     }
   }
   main();
-
+  /*
   const shortenName = () => {
     return "did:rchain:" + props.registryUri?.substring(0, 6) + "..." + props.registryUri?.substring(48, 54)
   }
+  */
 
   const qrCodeContent = () => {
     return `did:rchain:${props.registryUri}/${props.user}`;

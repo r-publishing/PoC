@@ -9,6 +9,11 @@
       "signature": "c9473c498d28541016a06095b686d4fc",
 >>>>>>> 48ddb4f1e53d074e9ea95cd2153164719e88b7f8
       "file": true
+    },
+    "key-did-provider-secp256k1": {
+      "signature": "91547f338a924da92ecb6ca34d192350",
+      "file": true,
+      "replaced": "https://github.com/TheoXD/key-did-provider-secp256k1.git#jwe"
     }
   }
 }

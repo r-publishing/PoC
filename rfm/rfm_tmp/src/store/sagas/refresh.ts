@@ -2,23 +2,21 @@ import { takeEvery, put } from 'redux-saga/effects';
 import * as rchainToolkit from 'rchain-toolkit';
 import {CombinedState} from 'redux';
 
-import { store, State, Bag, AccountStorage, Document, Signature, getPrivateKey } from '..';
+import { store, State,/* Bag, AccountStorage, Document, Signature,*/ getPrivateKey } from '..';
 //import { addressFromPurseId } from '../../utils/addressFromPurseId';
-import { inflate } from 'pako';
+//import { inflate } from 'pako';
 
-import { push, RouterState } from 'connected-react-router';
-
-import {
-  FingerprintAIO
-} from "@ionic-native/fingerprint-aio/";
+import { /*push,*/ RouterState } from 'connected-react-router';
 
 import KeyResolver from 'key-did-resolver';
 import { getResolver as getRchainResolver } from "rchain-did-resolver";
 import { Secp256k1Provider } from 'key-did-provider-secp256k1';
-import { DID, DagJWS } from 'dids';
+import { DID, /*DagJWS*/ } from 'dids';
+/*
 import { decodeBase64 } from 'dids/lib/utils'
 import dagCBOR from 'ipld-dag-cbor'
 import { JWE } from 'did-jwt'
+*/
 /*
 const {
   readBagsTerm,
