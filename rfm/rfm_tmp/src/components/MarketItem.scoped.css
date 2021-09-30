@@ -29,19 +29,22 @@ ion-icon {
 .mainContainer {
   display: flex;
   flex-direction: column;
+  border: 1px solid #CBC9C9;
+  border-radius: 10px;
 }
 
 .labelContainer {
-  margin-left: 10px;
+  margin-left: 15px;
   display: flex;
   flex-direction: row;
-  padding: 5px 5px 5px 5px;
+  padding: 5px 50px 5px 5px;
 }
 
-ion-label {
+/* ion-label {
   margin-top: 12px;
   margin-bottom: 12px;
-}
+} */
+
 
 ion-item h2 {
   font-weight: 600;
@@ -83,11 +86,13 @@ ion-item ion-note.md {
 .ImageFrame {
   padding: 0.6em;
   min-width: 8em;
+  max-width: 16em;
 }
 
 .ImageFrame.main {
   padding: 0.6em;
   min-width: 12em;
+  max-width: 22em;
 }
 
 .Image {
@@ -108,7 +113,7 @@ ion-footer ion-title {
   font-weight: normal;
 }
 
-ion-button.AddButton {
+ion-button {
   border-radius: 5px;
   border-color: var(--ion-color-primary);
   --box-shadow: none;
@@ -121,4 +126,8 @@ ion-button.AddButton {
 .signature-ok {
   color: #4b5;
   margin-left: 5px;
+}
+
+.secondary {
+  display: none;
 }

@@ -126,7 +126,7 @@ const DockListViewComponent: React.FC<DockListViewProps> = props => {
   return (
     
     <IonContent>
-      {props.platform !== 'web' ? (
+      {props.platform !== 'web' && false ? (
         <IonFab vertical="bottom" horizontal="end" slot="fixed">
           <IonFabButton color="tertiary" onClick={scanQRCode}>
             <IonIcon icon={qrCode} />
@@ -167,16 +167,6 @@ const DockListViewComponent: React.FC<DockListViewProps> = props => {
       ) : (
         undefined
       )}
-
-      <div>
-        {
-          (identity) ? (
-            <h2>Publisher balance: </h2>
-          ) : (
-              undefined
-          )
-        }
-      </div>
     </IonContent>
   );
 };

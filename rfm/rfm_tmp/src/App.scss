@@ -170,3 +170,24 @@ ion-button.with-border {
 .UserInfo {
   display: contents;
 }
+
+.alert-wrapper {
+  --background: white;
+}
+
+.alert-title {
+  color: black !important;
+}
+
+.alert-radio-label {
+  color: rgb(27, 27, 27) !important;
+}
+
+.EveSignature {
+  z-index: 111;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 10em;
+  margin-right: 2em;
+}

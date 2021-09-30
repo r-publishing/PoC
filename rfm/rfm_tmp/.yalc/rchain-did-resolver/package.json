@@ -1,6 +1,6 @@
 {
   "name": "rchain-did-resolver",
-  "version": "2.1.2+3540ecda",
+  "version": "2.1.2",
   "description": "Resolve DID documents from rchain testnet",
   "main": "lib/rchain-did-resolver.js",
   "types": "lib/rchain-did-resolver.d.ts",
@@ -23,7 +23,6 @@
     "build:js": "microbundle",
     "format": "prettier --write \"src/**/*.ts\"",
     "lint": "tslint -p tsconfig.json",
-    "prepare": "npm run build",
     "prepublishOnly": "npm test && npm run lint",
     "release": "semantic-release --debug",
     "test": "jest",
@@ -57,5 +56,6 @@
     "rchain-token": "https://github.com/fabcotech/rchain-token.git",
     "rchain-toolkit": "^0.3.2",
     "uint8arrays": "^1.1.0"
-  }
+  },
+  "yalcSig": "82311ff827ea528967924cfbb8af2d6a"
 }

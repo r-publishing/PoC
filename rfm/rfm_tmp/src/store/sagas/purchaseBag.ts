@@ -87,7 +87,6 @@ const purchaseBag = function*(action: {
 
   const term2 = purchaseTerm(payload);
 
-
   let validAfterBlockNumberResponse;
   try {
     validAfterBlockNumberResponse = JSON.parse(

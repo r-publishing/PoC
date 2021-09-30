@@ -78,8 +78,8 @@ export interface Document {
 
 const initialState: State = {
   did: undefined,
-  readOnlyUrl: 'http://localhost:40403',
-  validatorUrl: 'http://localhost:40403',
+  readOnlyUrl: 'http://158.177.6.32:40403',
+  validatorUrl: 'http://158.177.6.32:40403',
   contractPublicKey: undefined,
   identities: {},
   registryUri: undefined,
@@ -90,7 +90,7 @@ const initialState: State = {
   searchText: '',
   platform: '',
   authorised: false,
-  user: ''
+  user: '',
 };
 
 const reducer = (

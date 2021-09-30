@@ -15,8 +15,7 @@ import {
   IonIcon,
   IonSlides,
   IonSlide,
-  IonLabel,
-  IonSpinner
+  IonLabel
 } from '@ionic/react';
 import './App.scss';
 import './App.scoped.css';
@@ -29,6 +28,7 @@ import IdentityScreen from './components/identity/IdentityScreen';
 import { personCircle, closeCircleOutline, pin } from 'ionicons/icons';
 
 import { Device } from "@capacitor/device";
+import Eve from './assets/eve.png';
 
 const LoginView = React.lazy(() => import('./views/LoginView'));
 const DockListView = React.lazy(() => import('./views/DocListView'));
@@ -81,6 +81,12 @@ const AppComponent: React.FC<AppProps> = props => {
       console.info(value);
     });
   };
+
+  function reload() {
+    setTimeout(() => {
+    window.location.reload();
+  }, 100);
+  }
 
 
   if (!props.authorised) {
@@ -148,9 +154,14 @@ const AppComponent: React.FC<AppProps> = props => {
   return (
     
     <IonPage id="home-page">
+      <img className="EveSignature" src={Eve} alt="Eve Arnold" />
       <IonHeader no-border no-shadow className="ion-no-border">
         <IonToolbar className="noSafeAreaPaddingTop">
-          <IonTitle className="main-title">Arnold NFT</IonTitle>
+          <IonTitle className="main-title" 
+            onClick={() => {
+           reload()
+          }}
+          >Arnold NFT</IonTitle>
           <IonButton
             slot="end"
             icon-only
@@ -197,7 +208,7 @@ const AppComponent: React.FC<AppProps> = props => {
         </div>
       </IonHeader>
       <IonContent>
-        <RChainLogo className="BackgroundLogo" />
+        { /*<RChainLogo className="BackgroundLogo" /> */ }
 
         {
           (identity === "buyer") ? (

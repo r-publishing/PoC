@@ -28,6 +28,8 @@ const uploadBagData = function*(action: {
   const newBagId = action.payload.bagId;
   const state: HistoryState = store.getState();
 
+  console.log(state);
+
   const publicKey = state.reducer.publicKey;
   const privateKey = yield getPrivateKey(state);
 

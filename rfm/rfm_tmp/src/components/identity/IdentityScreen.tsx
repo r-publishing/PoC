@@ -26,7 +26,7 @@ const IdentityScreenComponent: React.FC<IdentityScreenComponentProps> = (props) 
   const [balance, setBalance] = useState<number>();
   const state: HistoryState = store.getState();
 
-  const READ_ONLY_HOST = 'http://localhost:40403';
+  const READ_ONLY_HOST = 'http://158.177.6.32:40403';
   const main = async () => {
     const term = `new return, rl(\`rho:registry:lookup\`), RevVaultCh, vaultCh, balanceCh in {
     rl!(\`rho:rchain:revVault\`, *RevVaultCh) |

@@ -22,6 +22,7 @@ interface HorizontalProps {
   searchText: string;
   refresh: (a: { publicKey: string; registryUri: string }) => void;
   setSearchText: (searchText: string) => void;
+  user: string;
 }
 
 const HorizontalComponent: React.FC<HorizontalProps> = props => {
@@ -56,6 +57,7 @@ const HorizontalComponent: React.FC<HorizontalProps> = props => {
           lines="none"
           className="SearchBarContainer"
         >
+          {props.user === "publisher" ? (
           <IonButton
             className="AddButton with-border"
             icon-only
@@ -67,7 +69,8 @@ const HorizontalComponent: React.FC<HorizontalProps> = props => {
             }}
           >
             <span>upload</span>
-          </IonButton>{' '}
+          </IonButton>) : (<React.Fragment />)} {' '}
+          { /*
           <IonButton
             className="AddButton with-border"
             icon-only
@@ -80,6 +83,7 @@ const HorizontalComponent: React.FC<HorizontalProps> = props => {
           >
             <IonIcon icon={refreshOutline} /> <span>refresh</span>
           </IonButton>
+          */ }
           <IonSearchbar
             color="none"
             value={props.searchText}
@@ -97,6 +101,7 @@ const Horizontal = connect(
       registryUri: state.reducer.registryUri as string,
       publicKey: state.reducer.publicKey as string,
       searchText: state.reducer.searchText as string,
+      user: state.reducer.user
     };
   },
   (dispatch: Dispatch) => {

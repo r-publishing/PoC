@@ -1,19 +1,40 @@
 .modal-document {
-  width: 100vw;
+  width: 100%;
+  margin-left: 100px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  position: relative;
+  position: absolute;
+  font-family: 'Poppins', sans-serif;
 }
+.web {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  text-align: center;
+  padding: 20px 20px 20px 20px;
+  width: 40%;
+  margin: 0 auto;
+  border-radius: 10px;
+  background-color: var(--ion-color-light-tint);
+}
+
+h3 {
+  color: black;
+}
+
 .upload-to-the-blockchain {
   margin-top: 10px;
   margin-bottom: 10px;
+  font-size: 1.5rem;
   color: var(--ion-color-primary);
+  font-family: 'Poppins', sans-serif;
 }
 
 .label {
   color: var(--ion-color-primary);
+  font-family: 'Poppins', sans-serif;
 }
 
 .ButtonArray {
@@ -42,7 +63,7 @@ ion-button.AddButton {
 .drop-area {
   margin-top: 5px;
   width: 100%;
-  height: 10em;
+  height: 5em;
   border: 1px solid #ccc;
   border-radius: 5px;
   color: #aaa;
@@ -50,8 +71,8 @@ ion-button.AddButton {
   justify-content: center;
   align-items: center;
   position: relative;
-  margin: 20px 0px 20px 20px;
-  max-width: 400px;
+  
+ 
 }
 .drop-area.hide {
   /*display: none;*/

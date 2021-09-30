@@ -3,6 +3,13 @@
   --offset-top: 0px;
   --offset-bottom: 0px;
   --background: #fff;
+  font-family: 'Poppins', sans-serif;
+}
+@media screen and (min-width: 768px) {
+  .modal-document {
+    width: 50vw;
+    margin: 0 auto;
+  }
 }
 
 .qrCodeContainer {
@@ -19,7 +26,7 @@
   color: #242;
   border-radius: 3px;
   margin-left: 10px;
-  width: 340px;
+  width: 400px;
 }
 .signature-ok,
 .signature-ko {
@@ -48,6 +55,7 @@
   width: 340px;
   --border-radius: 0;
   text-align: left;
+  font-family: 'Poppins', sans-serif;
 }
 
 .FloatingBottomLeft {
@@ -80,12 +88,14 @@
   padding: 0.6em;
   margin-top: 2em;
   min-width: 8em;
+  max-width: 16em;
 }
 
 .ImageFrame.main {
   padding: 0.6em;
   margin-top: 2em;
   min-width: 8em;
+  max-width: 22em;
 }
 
 .Image {

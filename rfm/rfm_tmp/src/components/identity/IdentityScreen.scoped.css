@@ -16,6 +16,10 @@ ion-button.ActionButton {
   }
 }
 
+ion-label {
+  font-family: 'Poppins', sans-serif;
+}
+
 .Avatar {
   width: 40%;
   height: 100%;
@@ -24,10 +28,12 @@ ion-button.ActionButton {
   border-radius: 50%;
   border: 5px solid transparent;
   box-shadow: 2px 2px 0px rgb(193 193 193);
+  font-family: 'Poppins', sans-serif;
 }
 
 .balance {
-  color: var(--ion-color-primary);
+  color: var(--ion-color-danger-tint);
   font-size: 1.2rem;
   font-weight: bold;
+  font-family: 'Poppins', sans-serif;
 }

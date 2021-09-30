@@ -228,7 +228,7 @@ export function getResolver() {
     })
 
     const readBoxResult = await rchainToolkit.http.exploreDeploy(
-      'http://localhost:40403',
+      'http://158.177.6.32:40403',
       {
         term: term
       }

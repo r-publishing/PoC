@@ -8,7 +8,9 @@ import {
   IonIcon,
   IonLabel,
   IonItem,
-  IonInput
+  IonInput,
+  IonCard,
+  IonCardContent
 } from '@ionic/react';
 import { closeCircle, downloadOutline } from 'ionicons/icons';
 import { connect } from 'react-redux';
@@ -132,31 +134,9 @@ const ModalDocumentComponent: React.FC<ModalDocumentProps> = (
         </IonToolbar>
       </IonHeader>
       */}
+    
       <IonContent className="modal-document">
-        {/* <div className="TopLeftStrip"><IonButton className="DownloadButton" onClick={() => {
-          doDownload();
-        }}><IonIcon icon={downloadOutline} size="small" /><IonLabel>Download</IonLabel></IonButton></div>
-        {
-        /* TODO
-        document && 'application/pdf' === folder.mimeType ? (
-          <PdfDocument
-            file={'data:application/pdf;base64,' + folder.data}
-            loading={renderLoading}
-            onLoadSuccess={onDocumentLoadSuccess}
-          >
-            {Array.from(new Array(numPages), (el, index) => (
-              <Page
-                className="PdfPage"
-                key={`page_${index + 1}`}
-                pageNumber={index + 1}
-                pageIndex={index}
-              />
-            ))}
-          </PdfDocument>
-        ) : (
-          <React.Fragment />
-        )
-        */}
+        
         {typeof document === 'undefined' ? (
           <IonLoading isOpen={true} />
         ) : (
@@ -174,8 +154,7 @@ const ModalDocumentComponent: React.FC<ModalDocumentProps> = (
           */
           undefined
         )}
-        {
-        /* document ? (
+        {/* document ? (
           <div className="ps5">
             <div className="document">
               <div className="left">
@@ -217,92 +196,96 @@ const ModalDocumentComponent: React.FC<ModalDocumentProps> = (
           </IonButton>
         </IonButtons>
         <div className="FloatingBottomLeft">
-        <div className="Files">
-        {
-          Object.keys(folder.files).map(filename => {
-            const file = folder.files[filename];
-            return (
-              <div key={filename}>
-              {['image/png', 'image/jpg', 'image/jpeg'].includes(
+          <div className="Files">
+            {Object.keys(folder.files).map(filename => {
+              const file = folder.files[filename];
+              return (
+                <div key={filename}>
+                  {['image/png', 'image/jpg', 'image/jpeg'].includes(
                     file.mimeType
                   ) ? (
-                      <div className={`ImageFrame ${folder.mainFile === filename ? "main" : ""}`}>
-                        <img
-                          className="Image"
-                          alt={file.name}
-                          src={`data:${file.mimeType};base64, ${file.data}`}
-                        />
-                      </div>
-                    ) : (
-                      <React.Fragment />
-                    )}
-            </div>)
-          })
-          }
-          </div>
-              {Object.keys(folder.signatures).map(s => {
-                return (
-                  <p className="signature-line" key={s}>
-                    {checkSignature(folder, s) ? (
-                      <>
-                        <span className="signature-ok">✓</span>
-                        {`signature n°${s} verified (${folder.signatures[
-                          s
-                        ].publicKey.slice(0, 12)}…)`}
-                      </>
-                    ) : (
-                      <>
-                        <span>✗</span>
-                        {`signature n°${s} invalid (${folder.signatures[
-                          s
-                        ].publicKey.slice(0, 12)}…)`}
-                      </>
-                    )}
-                  </p>
-                );
-              })}
-                {
-                  areSignaturesValid() && props.user === "publisher" ? (
-                    <div>
-                    <IonItem>
-                      <IonLabel position="floating" color="primary">
-                        Enter price
-                      </IonLabel>
-                      <IonInput 
-                        color="primary"
-                        placeholder="enter price(in rev) of nft"
-                        type="number"
-                        value={price}
-                        onIonChange={e =>
-                          setPrice(parseInt((e.target as HTMLInputElement).value))
-                        }
-                      />
-                    </IonItem>
-                    <IonButton
-                      className="SignatureRequiredBtn"
-                      size="default"
-                      onClick={() => {
-                        props.publish(props.registryUri, props.bagId, price || 0);
-                      }}
+                    <div
+                      className={`ImageFrame ${
+                        folder.mainFile === filename ? 'main' : ''
+                      }`}
                     >
-                      Publish to Marketplace
-                    </IonButton>
+                      <img
+                        className="Image"
+                        alt={file.name}
+                        src={`data:${file.mimeType};base64, ${file.data}`}
+                      />
                     </div>
-                  ) : (<React.Fragment />)
-                }
-              {[undefined, '0'].includes(lastSignature) && (
-                <IonButton
-                  className="SignatureRequiredBtn"
-                  size="default"
-                  onClick={() => {
-                    props.reupload(props.registryUri, props.bagId);
-                  }}
-                >
-                  Attest and Sign
-                </IonButton>
-              )}
+                  ) : (
+                    <React.Fragment />
+                  )}
+                </div>
+              );
+            })}
+          </div>
+          {Object.keys(folder.signatures).map(s => {
+            return (
+              <p className="signature-line" key={s}>
+                {checkSignature(folder, s) ? (
+                  <>
+                    <span className="signature-ok">✓</span>
+                    {`signature n°${s} verified (${folder.signatures[
+                      s
+                    ].publicKey.slice(0, 12)}…)`}
+                  </>
+                ) : (
+                  <>
+                    <span>✗</span>
+                    {`signature n°${s} invalid (${folder.signatures[
+                      s
+                    ].publicKey.slice(0, 12)}…)`}
+                  </>
+                )}
+              </p>
+            );
+          })}
+          {areSignaturesValid() && props.user === 'publisher' ? (
+            <div>
+              <IonItem>
+                <IonLabel position="floating" color="primary">
+                  Enter price
+                </IonLabel>
+                <IonInput
+                  color="primary"
+                  placeholder="enter price(in rev) of nft"
+                  type="number"
+                  value={price}
+                  onIonChange={e =>
+                    setPrice(parseInt((e.target as HTMLInputElement).value))
+                  }
+                />
+              </IonItem>
+              <IonButton
+                className="SignatureRequiredBtn"
+                size="default"
+                onClick={() => {
+                  props.publish(props.registryUri, props.bagId, price || 0);
+                }}
+              >
+                Publish to Marketplace
+              </IonButton>
             </div>
-      </IonContent>
+          ) : (
+            <React.Fragment />
+          )}
+          {[undefined, '0'].includes(lastSignature) && (
+            <IonButton
+              className="SignatureRequiredBtn"
+              size="default"
+              onClick={() => {
+                props.reupload(props.registryUri, props.bagId);
+              }}
+            >
+              Attest and Sign
+            </IonButton>
+          )}
+        </div>
+        </IonContent>
+        
     </>
   );
 };

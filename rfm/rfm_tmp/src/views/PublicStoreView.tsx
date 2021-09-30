@@ -98,13 +98,17 @@ const PublicStoreComponent: React.FC<PublicDocumentView> = props => {
 
   return (
     <div className="public-store">
-      {
-        (identity) ? (
+      {identity ? (
+        <div className="title">
           <h2>My NFTs</h2>
-        ) : (
-        <h2>NFT Marketplace</h2>)}
+        </div>
+      ) : (
+        <div className="title">
+          <h2>NFT Marketplace</h2>
+        </div>
+      )}
       <IonContent>
-        {props.platform !== 'web' ? (
+        {props.platform !== 'web' && false ? (
           <IonFab vertical="bottom" horizontal="end" slot="fixed">
             <IonFabButton color="tertiary" onClick={scanQRCode}>
               <IonIcon icon={qrCode} />
@@ -130,8 +134,11 @@ const PublicStoreComponent: React.FC<PublicDocumentView> = props => {
                       bag={props.bags[address]}
                       folder={props.bagsData[address]}
                       onlyCompleted={false}
-                      awaitsSignature={!!props.documentsAwaitingSignature[address]}
-                      completed={!!props.documentsCompleted[address]}                   />
+                      awaitsSignature={
+                        !!props.documentsAwaitingSignature[address]
+                      }
+                      completed={!!props.documentsCompleted[address]}
+                    />
                   );
                 })
               : [...Array(10)].map((x, i) => (

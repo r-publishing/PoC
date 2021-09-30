@@ -46,7 +46,7 @@ const QRCodeComponent: React.FC<QRCodeComponentProps> = ({ url }) => {
       ToggleSize();
     }}>
       <canvas ref={qrcodecanvas} className="Image" />
-      <IonLabel color="light">Scan to view</IonLabel>
+      <IonLabel color="dark">Scan to view</IonLabel>
     </IonChip>
   );
 };
