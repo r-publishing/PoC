@@ -145,7 +145,7 @@ const uploadBagData = function*(action: {
   Swal.fire({
     text: 'Upload is in progress',
     showConfirmButton: false,
-    timer: 30000,
+    timer: 15000,
   });
 
 
@@ -158,11 +158,11 @@ const uploadBagData = function*(action: {
             timer: 10000,
         })
     }
-  setTimeout(() => { notify() }, 30000);
+  setTimeout(() => { notify() }, 15000);
   
   setTimeout(() => {
     window.location.reload();
-  }, 30000);
+  }, 15000);
   return true;
 };
 
