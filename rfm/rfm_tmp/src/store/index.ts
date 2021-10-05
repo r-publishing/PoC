@@ -77,8 +77,8 @@ export interface Document {
 
 const initialState: State = {
   did: undefined,
-  readOnlyUrl: 'http://158.177.6.32:40403',
-  validatorUrl: 'http://158.177.6.32:40403',
+  readOnlyUrl: 'http://158.177.13.133:40403',
+  validatorUrl: 'http://158.177.13.133:40403',
   contractPublicKey: undefined,
   identities: {},
   registryUri: undefined,
