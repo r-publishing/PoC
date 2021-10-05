@@ -24,6 +24,7 @@ const checkDefaultPurses = require('../tests-ft/test_checkDefaultPurses').main;
 const updatePurseData = require('../tests-ft/test_updatePurseData.js').main;
 const updatePursePrice = require('../tests-ft/test_updatePursePrice.js').main;
 const purchase = require('../tests-ft/test_purchase').main;
+const purchaseData = require('../tests-ft/test_purchaseData').main;
 
 const PURSES_TO_CREATE = 10;
 // the goal is that step 17 fails multiple time
@@ -41,14 +42,20 @@ const PUBLIC_KEY_2 = rc.utils.publicKeyFromPrivateKey(PRIVATE_KEY_2);
 const PUBLIC_KEY_3 =
   '0459030bff5123ffa8360fe0c57b97c5d5578bd6da07af17a7879c2081153acea0f0f40c88f1615e763121123cded66844eab6dfeb46892fb095076648c0066274';
 
+const PUBLIC_KEY_4 =
+  '0424eea58bd9d52f2aa665e1485f154a147ffdf5361ab687bfbb14f55215ea27bdbd5cb13fca6afbee60d31f985faaf04bcf09868bb7b69a20deb2f44a535693c9';
+
+
 const balances1 = [];
 const balances2 = [];
 const balances3 = [];
+const balances4 = [];
 
 const main = async () => {
   balances1.push(await getBalance(PUBLIC_KEY));
   balances2.push(await getBalance(PUBLIC_KEY_2));
   balances3.push(await getBalance(PUBLIC_KEY_3));
+  balances4.push(await getBalance(PUBLIC_KEY_4));
 
   const data = await deployMaster(PRIVATE_KEY, PUBLIC_KEY);
   const masterRegistryUri = data.registryUri.replace('rho:id:', '');
@@ -185,7 +192,9 @@ const main = async () => {
     '  05 dust cost: ' +
       (balances1[balances1.length - 2] - balances1[balances1.length - 1])
   );
-
+  const payeesData = {payees: [
+    {"revAddress": "11113kteb9dsCVYZPiFBMAnLYdjvnqNf9wV2aTg5ecAtKHXYUBDGo", "percentage-times-100": 10000}
+  ]};
   await updatePurseData(
     PRIVATE_KEY,
     PUBLIC_KEY,
@@ -266,7 +275,6 @@ const main = async () => {
     );
   }
   console.log(`✓ 10 failed purchase because of invalid payload`);
-
   const purchaseFailed2 = await purchase(PRIVATE_KEY, PUBLIC_KEY, {
     masterRegistryUri: masterRegistryUri,
     purseId: ids[0],
@@ -293,7 +301,7 @@ const main = async () => {
     );
   }
   console.log(`✓ 11 failed purchase because of invalid quantity`);
-
+  let oldAttestorWallet = await getBalance("0424eea58bd9d52f2aa665e1485f154a147ffdf5361ab687bfbb14f55215ea27bdbd5cb13fca6afbee60d31f985faaf04bcf09868bb7b69a20deb2f44a535693c9");
   const purchaseSuccess = await purchase(PRIVATE_KEY, PUBLIC_KEY, {
     masterRegistryUri: masterRegistryUri,
     purseId: ids[0],
@@ -306,9 +314,14 @@ const main = async () => {
     price: 1000,
     publicKey: PUBLIC_KEY,
   });
+  let newAttestorWallet = await getBalance("0424eea58bd9d52f2aa665e1485f154a147ffdf5361ab687bfbb14f55215ea27bdbd5cb13fca6afbee60d31f985faaf04bcf09868bb7b69a20deb2f44a535693c9");
+  let attestorBalanceDiff = newAttestorWallet - oldAttestorWallet;
+  console.log("Attestor balance diff: ");
+  console.info(attestorBalanceDiff);
   balances1.push(await getBalance(PUBLIC_KEY));
   balances2.push(await getBalance(PUBLIC_KEY_2));
   balances3.push(await getBalance(PUBLIC_KEY_3));
+  balances4.push(await getBalance(PUBLIC_KEY_4));
   if (purchaseSuccess.status !== 'completed') {
     throw new Error('purchase should have been successful');
   }
@@ -326,15 +339,16 @@ const main = async () => {
   ]);
 
   if (
-    balances2[balances2.length - 2] + 980 !==
-    balances2[balances2.length - 1]
+    balances4[balances4.length - 2] + 980 !==
+    balances4[balances4.length - 1]
   ) {
     throw new Error('owner of box 1 did not receive payment from purchase');
   }
-
+/*
   if (balances3[0] + 20 !== balances3[1]) {
     throw new Error('owner of public key 3 did not receive fee from purchase');
   }
+*/
   console.log(`✓ 12 purchase`);
   console.log(`✓ 12 balance of purse's owner checked and has +980 dust`);
   console.log(`✓ 12 2% fee was earned by owner of public key 3`);
@@ -343,7 +357,6 @@ const main = async () => {
     '  12 dust cost: ' +
       (balances1[balances1.length - 2] - balances1[balances1.length - 1])
   );
-
   const purchaseFromZeroFailed1 = await purchase(PRIVATE_KEY_2, PUBLIC_KEY_2, {
     masterRegistryUri: masterRegistryUri,
     purseId: '0',

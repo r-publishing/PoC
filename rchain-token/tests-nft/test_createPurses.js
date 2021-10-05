@@ -1,6 +1,7 @@
 const rc = require('rchain-toolkit');
 
 const { createPursesTerm } = require('../src/createPursesTerm');
+//const { createPursesDataTerm } = require('../src/createPursesDataTerm');
 const { validAfterBlockNumber, prepareDeploy } = require('../cli/utils');
 const waitForUnforgeable = require('../cli/waitForUnforgeable').main;
 
@@ -19,7 +20,9 @@ module.exports.main = async (
     publicKey1,
     timestamp
   );
-
+  const payeesData = {payees: [
+    {"revAddress": "11113kteb9dsCVYZPiFBMAnLYdjvnqNf9wV2aTg5ecAtKHXYUBDGo", "percentage-times-100": 10000}
+  ]};
   const payload = {
     purses: {
       ['0']: {
@@ -27,10 +30,10 @@ module.exports.main = async (
         boxId: toBoxId,
         type: '0',
         quantity: 1000000,
-        price: null,
+        price: null
       },
     },
-    data: {},
+    data: payeesData,
     masterRegistryUri: masterRegistryUri,
     contractId: contractId,
     boxId: boxId,
@@ -42,6 +45,7 @@ module.exports.main = async (
       type: '0',
       quantity: 1,
       price: null,
+      data: payeesData,
     };
   }
 

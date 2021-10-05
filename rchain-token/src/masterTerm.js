@@ -1809,31 +1809,52 @@ new MakeNode, ByteArrayToNybbleList, TreeHashMapSetter, TreeHashMapGetter, TreeH
               for (@(pursesThm, pursesDataThm, purse, purseData, RevVault, escrowPurseRevAddr, escrowPurseAuthKey, emitterRevAddress, recipientRevAddress, amount, feeAmount, feeRevAddress) <- step5Ch) {
                 @RevVault!("findOrCreate", escrowPurseRevAddr, *ch50) |
                 for (@(true, purseVaultEscrow) <- ch50) {
-                  @purseVaultEscrow!("transfer", recipientRevAddress, amount, escrowPurseAuthKey, *ch51) |
-                  for (@r <- ch51) {
-                    match r {
-                      (true, Nil) => {
-                        if (feeAmount != 0) {
-                          @purseVaultEscrow!("transfer", feeRevAddress, feeAmount, escrowPurseAuthKey, *ch53) |
-                          for (@transferFeeReturn <- ch53) {
-                            match transferFeeReturn {
+
+                  new pay, ack1 in {
+                    contract pay(@payees, aCh) = {
+                      stdout!(["trying to pay", payees]) |
+                      match payees {
+                        [{"revAddress": recipientRevAddress2, "percentage-times-100": fraction, ..._}, ...last] => { new ackCh in {
+                          stdout!(["transferring", amount , "to", recipientRevAddress2, amount * fraction / 10000]) |
+                          @purseVaultEscrow!("transfer", recipientRevAddress2, amount * fraction / 10000, escrowPurseAuthKey, *ch51) |
+                          for (@r <- ch51) {
+                            match r {
                               (true, Nil) => {
-                                stdout!("fee transfer successful")
+                                pay!(last, *ackCh) |
+                                stdout!({"message": "transfer successful", "recip": recipientRevAddress2}) |
+                                aCh!((true, recipientRevAddress2))
                               }
                               _ => {
-                                stdout!("error: CRITICAL could not transfer fee")
+                                stdout!("error: CRITICAL could not transfer") |
+                                aCh!((false, "could not transfer"))
                               }
                             }
+                          } |
+                          for (@(true, _) <- ackCh) {
+                            stdout!([recipientRevAddress2, "payed"])
+                          } |
+                          for (@(false, _) <- ackCh) {
+                            stdout!([recipientRevAddress2, "not payed"])
                           }
-                        } |
-                        unlock!((true, Nil))
+                        }}
+                        _ => {
+                          stdout!("looping done") |
+                          aCh!((true, Nil))
+                        }
                       }
-                      _ => {
-                        stdout!("error: CRITICAL, makePurse went fine, but could not do final transfer") |
-                        rollbackCh!("error: CRITICAL, makePurse went fine, but could not do final transfer")
-                      }
-                    }
+                    } |
+                    pay!(purseData.get("payees"), *ack1)
                   }
+                  // for (@transferFeeReturn <- ch53) {
+                  //   match transferFeeReturn {
+                  //     (true, Nil) => {
+                  //       stdout!("fee transfer successful")
+                  //     }
+                  //     _ => {
+                  //       stdout!("error: CRITICAL could not transfer fee")
+                  //     }
+                  //   }
+                  // }
                 }
               }
             }

@@ -74,6 +74,20 @@ module.exports.purchaseTerm = (
 `
 );
 
+const purchaseAndWithdrawFile = fs
+  .readFileSync('./rholang/op_purchase_and_withdraw.rho')
+  .toString('utf8');
+fs.writeFileSync(
+  './src/purchaseAndWithdrawTerm.js',
+  `/* GENERATED CODE, only edit rholang/*.rho files*/
+module.exports.purchaseAndWithdrawTerm = (
+  payload
+) => {
+  return \`${replaceEverything(purchaseAndWithdrawFile)}\`;
+};
+`
+);
+
 const renewFile = fs.readFileSync('./rholang/op_renew.rho').toString('utf8');
 fs.writeFileSync(
   './src/renewTerm.js',
