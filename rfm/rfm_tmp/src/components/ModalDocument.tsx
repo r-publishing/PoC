@@ -9,6 +9,7 @@ import {
   IonLabel,
   IonItem,
   IonInput,
+  IonChip,
   //IonCard,
   //IonCardContent
 } from '@ionic/react';
@@ -230,7 +231,7 @@ const ModalDocumentComponent: React.FC<ModalDocumentProps> = (
           </div>
           {Object.keys(folder.signatures).map(s => {
             return (
-              <p className="signature-line" key={s}>
+              <IonChip key={s} className="signature-line">
                 {checkSignature(folder, s) ? (
                   <>
                     <span className="signature-ok">✓</span>
@@ -246,7 +247,7 @@ const ModalDocumentComponent: React.FC<ModalDocumentProps> = (
                     ].publicKey.slice(0, 12)}…)`}
                   </>
                 )}
-              </p>
+              </IonChip>
             );
           })}
           {areSignaturesValid() && props.user === 'publisher' ? (
