@@ -228,7 +228,7 @@ export function getResolver() {
     })
 
     const readBoxResult = await rchainToolkit.http.exploreDeploy(
-      'http://158.177.13.133:40403',
+      'https://gracious-pare-6c4c99.netlify.app',
       {
         term: term
       }

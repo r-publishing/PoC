@@ -12,7 +12,7 @@ import './IdentityScreen.scoped.css';
 
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
-import { HistoryState /*, store */ } from '../../store';
+import { HistoryState /*, store*/ } from '../../store';
 import QRCodeComponent from '../QRCodeComponent';
 //import { Users } from '../../users/users';
 //import Avatar from '../../assets/avatar.jpg';
@@ -26,7 +26,7 @@ const IdentityScreenComponent: React.FC<IdentityScreenComponentProps> = (props) 
   const [balance, setBalance] = useState<number>();
   //const state: HistoryState = store.getState();
 
-  const READ_ONLY_HOST = 'http://158.177.13.133:40403';
+  const READ_ONLY_HOST = 'https://gracious-pare-6c4c99.netlify.app';
   const main = async () => {
     const term = `new return, rl(\`rho:registry:lookup\`), RevVaultCh, vaultCh, balanceCh in {
     rl!(\`rho:rchain:revVault\`, *RevVaultCh) |
@@ -112,4 +112,3 @@ const IdentityScreen = connect(
 )(IdentityScreenComponent);
 
 export default IdentityScreen;
-

@@ -77,8 +77,8 @@ export interface Document {
 
 const initialState: State = {
   did: undefined,
-  readOnlyUrl: 'http://158.177.13.133:40403',
-  validatorUrl: 'http://158.177.13.133:40403',
+  readOnlyUrl: 'https://gracious-pare-6c4c99.netlify.app',
+  validatorUrl: 'https://gracious-pare-6c4c99.netlify.app',
   contractPublicKey: undefined,
   identities: {},
   registryUri: undefined,
