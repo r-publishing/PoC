@@ -2,6 +2,8 @@ import { connect } from 'react-redux';
 import React from 'react';
 import {
   IonIcon,
+  IonGrid,
+  IonRow,
   //IonItem,
   IonLabel,
   IonItemSliding,
@@ -14,12 +16,15 @@ import {
   /*
   IonToolbar,
   IonTitle,
+  */
   IonCardTitle,
   IonCardSubtitle,
-  IonCardContent,
+  //IonCardContent,
+  /*
   IonContent,
-  IonCardHeader
   */
+  IonCardHeader
+  
 } from '@ionic/react';
 //import { Card, Button } from 'react-bootstrap';
 
@@ -74,6 +79,25 @@ const MarketItemComponent: React.FC<MarketItemProps> = (
               : ''
           } ${props.completed ? 'success' : 'secondary'}`}
         >
+          <IonCardHeader>
+            <IonCardSubtitle>
+                <IonLabel className="ion-text-wrap">
+                  <h2>{bagIdFromAddress(props.id)}</h2>
+                </IonLabel>
+            </IonCardSubtitle>
+            <IonCardTitle>
+                {!props.awaitsSignature && (
+                  <IonGrid>
+                    <IonRow>
+                    <IonIcon  icon={checkmarkCircle} color="success" />
+                    <IonLabel className="ion-text-wrap">
+                      <h2>Attested</h2>
+                    </IonLabel>
+                    </IonRow>
+                  </IonGrid>
+                )}
+            </IonCardTitle>
+          </IonCardHeader>
           <div className="mainContainer">
             <div className="IconContainer">
               {Object.keys(props.folder.files).map(filename => {
@@ -117,14 +141,6 @@ const MarketItemComponent: React.FC<MarketItemProps> = (
                   Buy for {(props.bag.price || 0) * (1 / 100000000)} REV
                 </IonButton>
               )}
-
-                {!props.awaitsSignature && (
-                  <IonIcon icon={checkmarkCircle} color="success" />
-                )}
-
-                <IonLabel className="ion-text-wrap">
-                  <h2>{bagIdFromAddress(props.id)}</h2>
-                </IonLabel>
             </div>
           </div>
         </IonCard>
