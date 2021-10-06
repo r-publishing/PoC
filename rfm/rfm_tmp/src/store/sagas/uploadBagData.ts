@@ -160,6 +160,7 @@ const uploadBagData = function*(action: {
     }
   setTimeout(() => { notify() }, 15000);
   
+  localStorage.setItem('tour', '1');
   setTimeout(() => {
     window.location.reload();
   }, 15000);

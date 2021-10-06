@@ -9,6 +9,7 @@ import {
   IonLabel,
   IonItem,
   IonInput,
+  IonChip
   //IonCard,
   //IonCardContent
 } from '@ionic/react';
@@ -24,6 +25,8 @@ import { State, HistoryState, getPlatform } from '../store';
 
 import './ModalDocument.scoped.css';
 import { addressFromPurseId } from 'src/utils/addressFromPurseId';
+
+import { useTour } from '@reactour/tour';
 
 export interface KeyPair {
   privateKey: any;
@@ -49,6 +52,22 @@ interface DocumentInfo {
 }
 */
 
+
+const attestSteps = [
+  { selector: '.SignatureRequiredBtn', content: 'If the photo looks legit you can now attest it and put your signature.' },
+]
+
+const publisherSteps = [
+  { selector: '.attestation-step-file', content: 'Pick a photo you wish to upload.' },
+  //{ selector: '.attestation-step-main-file', content: 'Set your photo as your main file.' },
+  { selector: '.attestation-step-name', content: 'Choose a name for your NFT.' },
+  //{ selector: '.attestation-step-select-attestor', content: 'Click here and appoint an attestor.',
+    //highlightedSelectors: ["ionic-selectable-modal.ion-page"],
+    //mutationObservables: ["ion-modal.show-modal.modal-interactive"]
+  //},
+  { selector: '.attestation-step-upload', content: 'Now press upload to begin attestation process.' },
+]
+
 const ModalDocumentComponent: React.FC<ModalDocumentProps> = (
   props: ModalDocumentProps
 ) => {
@@ -67,9 +86,28 @@ const ModalDocumentComponent: React.FC<ModalDocumentProps> = (
   pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version
     }/pdf.worker.js`;
 
+  const { isOpen, currentStep, steps, setIsOpen, setCurrentStep, setSteps } = useTour()
+  //useEffect(() => {
+//
+  //}, []);
+
   useEffect(() => {
+    setTimeout(() => {
+      if (props.user === "publisher") {
+        setSteps(publisherSteps);
+      }
+      if (props.user === "attestor") {
+        setSteps(attestSteps);
+      }
+      setTimeout(() => {
+        setIsOpen(false);
+        setCurrentStep(0);
+        setIsOpen(true);
+      }, 888)
+    }, 100);
+
     props.loadBag(props.registryUri, props.bagId, props.state);
-  });
+  }, []);
   /*
   const renderLoading = () => {
     return <IonProgressBar color="secondary" type="indeterminate" />;
@@ -227,7 +265,8 @@ const ModalDocumentComponent: React.FC<ModalDocumentProps> = (
           </div>
           {Object.keys(folder.signatures).map(s => {
             return (
-              <p className="signature-line" key={s}>
+              <IonChip key={s} className="signature-line">
+              
                 {checkSignature(folder, s) ? (
                   <>
                     <span className="signature-ok">✓</span>
@@ -243,7 +282,8 @@ const ModalDocumentComponent: React.FC<ModalDocumentProps> = (
                     ].publicKey.slice(0, 12)}…)`}
                   </>
                 )}
-              </p>
+              
+              </IonChip>
             );
           })}
           {areSignaturesValid() && props.user === 'publisher' ? (

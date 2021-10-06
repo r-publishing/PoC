@@ -1,6 +1,6 @@
 import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useHistory } from 'react-router';
 
 import {
@@ -29,6 +29,7 @@ import ModalDocument from '../components/ModalDocument';
 import ModalUploadDocument from '../components/ModalUploadDocument';
 
 import { parse } from 'did-resolver';
+import { useTour } from '@reactour/tour';
 
 /*
 declare global {
@@ -52,6 +53,17 @@ type TRouteParams = {
   uri: string; // since it route params
 };
 */
+
+const componentSteps = [
+  { selector: '.attestation-step-upload-button', content: 'Upload a photo you wish to attest and publish.' },
+  { selector: '.attestation-step-upload-button', content: 'Upload a photo you wish to attest and publish2.' },
+]
+
+const attestSteps = [
+  { selector: '.not_attested.pos_0', content: 'Attestor received a photo to review. Attest it now by clicking on it.' },
+  { selector: '.not_attested.pos_0', content: 'Attestor received a photo to review. Attest it now by clicking on it.' },
+]
+
 interface DockListViewProps {
   connected: string;
   registryUri: string;
@@ -65,10 +77,28 @@ interface DockListViewProps {
   documentsCompleted: State['bagsData'];
   searchText: string;
   platform: string;
+  user: string;
 }
+
+
 const DockListViewComponent: React.FC<DockListViewProps> = props => {
   const history = useHistory();
 
+
+  const { isOpen, currentStep, steps, setIsOpen, setCurrentStep, setSteps } = useTour()
+  useEffect(() => {
+    if (props.user === "publisher") {
+      setSteps(componentSteps);
+    }
+    if (props.user === "attestor") {
+      setSteps(attestSteps);
+    }
+    setTimeout(() => {
+      setIsOpen(false);
+      setCurrentStep(0);
+      setIsOpen(true);
+    }, 100)
+  }, []);
   //const identity = localStorage.getItem('publisher');
 
   const scanQRCode = () => {
@@ -145,9 +175,10 @@ const DockListViewComponent: React.FC<DockListViewProps> = props => {
       {props.action === 'list' ? (
         <>
           {!props.isLoading
-            ? props.documentsAddressesInOrder.map(address => {
+            ? props.documentsAddressesInOrder.map((address, index) => {
                 return (
                   <BagItem
+                    pos={index.toString()}
                     key={address}
                     registryUri={props.registryUri}
                     id={address}
@@ -184,6 +215,7 @@ export const DockListView = connect(
       isLoading: state.reducer.isLoading,
       searchText: state.reducer.searchText,
       platform: state.reducer.platform,
+      user: state.reducer.user,
     };
   },
   (dispatch: Dispatch) => {

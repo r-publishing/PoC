@@ -148,6 +148,7 @@ const purchaseBag = function*(action: {
     }
     setTimeout(() => { notify() }, 15000);
 
+    localStorage.setItem('tour', '3');
     setTimeout(() => {
       window.location.reload();
     }, 15000);

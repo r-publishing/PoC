@@ -8,6 +8,7 @@ import {
   IonItemOptions,
   IonItemOption,
   IonButton,
+  IonCard
   /*
   IonPage,
   IonHeader,
@@ -49,7 +50,7 @@ const MarketItemComponent: React.FC<MarketItemProps> = (
   //const history = useHistory();
 
   return (
-    <IonItemSliding className="container">
+    <IonItemSliding className="container" disabled>
       <IonItemOptions side="end">
         <IonItemOption
           color="secondary"
@@ -74,7 +75,8 @@ const MarketItemComponent: React.FC<MarketItemProps> = (
           } ${props.completed ? 'success' : 'secondary'}`}
           detail={false}
         >
-          <div className="mainContainer">
+          { /*<div className="mainContainer"> */ }
+          <IonCard color="dark" className="MarketCard">
             <div className="IconContainer">
               {Object.keys(props.folder.files).map(filename => {
                 const file = props.folder.files[filename];
@@ -126,7 +128,7 @@ const MarketItemComponent: React.FC<MarketItemProps> = (
                   <h2>{bagIdFromAddress(props.id)}</h2>
                 </IonLabel>
             </div>
-          </div>
+          </IonCard>
         </IonItem>
       }
     </IonItemSliding>

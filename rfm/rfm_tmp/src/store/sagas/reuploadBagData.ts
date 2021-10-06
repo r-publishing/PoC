@@ -163,6 +163,7 @@ const reuploadBagData = function*(action: {
     }
     setTimeout(() => { notify() }, 15000);
 
+  localStorage.setItem('tour', '0');
   setTimeout(() => {
     window.location.reload();
   }, 15000);

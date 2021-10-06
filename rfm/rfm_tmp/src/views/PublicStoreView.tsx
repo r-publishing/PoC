@@ -1,6 +1,6 @@
 import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useHistory } from 'react-router';
 
 import {
@@ -28,6 +28,7 @@ import ModalDocument from '../components/ModalDocument';
 
 import { parse } from 'did-resolver';
 import './PublicStore.scoped.css';
+import { useTour } from '@reactour/tour';
 
 interface PublicDocumentView {
   connected: string;
@@ -42,11 +43,28 @@ interface PublicDocumentView {
   documentsCompleted: State['bagsData'];
   searchText: string;
   platform: string;
+  user: string;
 }
+
+const purchaseSteps = [
+  { selector: '.MarketCard', content: 'The NFT is now for sale.' },
+]
 
 const PublicStoreComponent: React.FC<PublicDocumentView> = props => {
   const identity = localStorage.getItem('wallet');
   const history = useHistory();
+
+  const { isOpen, currentStep, steps, setIsOpen, setCurrentStep, setSteps } = useTour()
+  useEffect(() => {
+    if (props.user === "buyer") {
+      setSteps(purchaseSteps);
+    }
+    setTimeout(() => {
+      setIsOpen(false);
+      setCurrentStep(0);
+      setIsOpen(true);
+    }, 100)
+  }, []);
 
   const scanQRCode = () => {
     (window as any).cordova.plugins.barcodeScanner.scan(
@@ -162,6 +180,7 @@ export const PublicStore = connect(
       isLoading: state.reducer.isLoading,
       searchText: state.reducer.searchText,
       platform: state.reducer.platform,
+      user: state.reducer.user,
     };
   },
   (dispatch: Dispatch) => {

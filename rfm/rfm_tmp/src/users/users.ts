@@ -17,4 +17,10 @@ export const Users = {
     REGISTRY_URI:
       'qmfube3y5j3sp67y8op7agb33pr97qdoy5mp5z6dgk4kwusqdrtn7t',
   },
+  reseller: {
+    PRIVATE_KEY:
+      '6dfd785d7dea6e4adcec0879b8ee4260c6ab8b9250e36b0bc4170b1ee6ddc566',
+    REGISTRY_URI:
+      'qmfube3y5j3sp67y8op7agb33pr97qdoy5mp5z6dgk4kwusqdrtn7t',
+  },
 };

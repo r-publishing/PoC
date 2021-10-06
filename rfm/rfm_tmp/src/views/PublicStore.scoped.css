@@ -1,6 +1,6 @@
 .public-store {
   background: #fff;
-  height: 100vh;
+  height: 100%;
   color: var(--ion-color-primary);
   margin-left: 20px;
 }

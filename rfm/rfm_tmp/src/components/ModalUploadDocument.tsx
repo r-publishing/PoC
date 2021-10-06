@@ -18,6 +18,7 @@ import {
 } from '@ionic/react';
 import { document as documentIcon, trash, /* create */ } from 'ionicons/icons';
 import { useHistory, RouteComponentProps } from 'react-router';
+import  {IonicSelectable} from "@ionic-selectable/core/dist/custom-elements";
 
 import {
   Bag,
@@ -32,6 +33,7 @@ import {
 import './ModalUploadDocument.scoped.css';
 
 import { FileSelect } from "capacitor-file-select";
+import { withTour } from '@reactour/tour'
 
 //Instead of deprecated withRouter
 export const withHistory = (Component: any) => {
@@ -42,12 +44,24 @@ export const withHistory = (Component: any) => {
   };
 };
 
+declare global {
+  namespace JSX {
+    interface IntrinsicElements {
+      "ionic-selectable": React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement>;
+    }
+  }
+}
+
 interface ModalUploadDocumentProps extends RouteComponentProps {
   state: HistoryState;
   publicKey: string;
   bags: { [bagId: string]: Bag };
   upload: (bagId: string, folder: Folder, did: string, files: any/*, price: string*/) => void;
   platform: string;
+  setCurrentStep: (arg0: number) => void;
+  currentStep: number;
+  setSteps: (arg0: Array<any>) => void;
+  setIsOpen: (arg0: boolean) => void;
   //recipient: string;
 }
 interface ModalUploadDocumentState {
@@ -58,6 +72,8 @@ interface ModalUploadDocumentState {
   folder: undefined | Folder;
   files: undefined | any;
   platform: string;
+  attestorSelect: React.RefObject<HTMLElement>;
+  nameInput: React.RefObject<HTMLIonInputElement>;
   //price: string;
 }
 
@@ -67,6 +83,17 @@ let folder: Folder = {
   files: {},
   mainFile: ""
 };
+
+const componentSteps = [
+  { selector: '.attestation-step-file', content: 'Pick a photo you wish to upload.' },
+  //{ selector: '.attestation-step-main-file', content: 'Set your photo as your main file.' },
+  { selector: '.attestation-step-name', content: 'Choose a name for your NFT.' },
+  //{ selector: '.attestation-step-select-attestor', content: 'Click here and appoint an attestor.',
+    //highlightedSelectors: ["ionic-selectable-modal.ion-page"],
+    //mutationObservables: ["ion-modal.show-modal.modal-interactive"]
+  //},
+  { selector: '.attestation-step-upload', content: 'Now press upload to begin attestation process.' },
+]
 
 class ModalUploadDocumentComponent extends React.Component<
   ModalUploadDocumentProps,
@@ -82,10 +109,32 @@ class ModalUploadDocumentComponent extends React.Component<
       bagId: '',
       dropErrors: [],
       platform: props.platform,
-      files: {}
+      files: {},
+      attestorSelect: React.createRef(),
+      nameInput: React.createRef()
     };
   }
+  
   dropEl: HTMLTextAreaElement | undefined = undefined;
+
+  componentDidMount() {
+    setTimeout( () => {
+      this.props.setSteps(componentSteps);
+      console.info("NEXT STEP");
+      this.props.setCurrentStep(this.props.currentStep + 1);
+    }, 100);
+
+    const node = this.state.attestorSelect.current;
+    (node as any).items = [
+      { id: 1, name: "Attestor"},
+      { id: 2, name: "Charity"},
+    ];
+
+    //(node as any).hasConfirmButton = true;
+    (node as any).addEventListener("changed", (event: any) => {
+      console.log(event);
+    });
+  }
 
   blobToBase64 = (blob: Blob) =>
     new Promise((resolve, reject) => {
@@ -181,6 +230,17 @@ class ModalUploadDocumentComponent extends React.Component<
       }
   
       r.readAsDataURL(file);
+
+      setTimeout( () => {
+        this.props.setCurrentStep(this.props.currentStep + 1);
+        if (this.state.nameInput.current) {
+          this.state.nameInput.current.value = "Unseen Photo";
+          this.state.nameInput.current?.setFocus();
+          setTimeout( () => {
+            this.props.setCurrentStep(this.props.currentStep + 1);
+          }, 5000);
+        }
+      }, 100);
     })
 
     //folder.files = this.state.files;
@@ -192,6 +252,10 @@ class ModalUploadDocumentComponent extends React.Component<
         mainFile: folder.mainFile || Object.keys(files)[0]
       }
     });
+
+    this.setState({
+      mainFile: folder.mainFile,
+    })
     
   };
 
@@ -234,10 +298,14 @@ class ModalUploadDocumentComponent extends React.Component<
               Enter name of document
             </IonLabel>
             <IonInput
-              className="label"
+              className="attestation-step-name"
+              ref={this.state.nameInput} 
+              //className="label"
+              id="nameInput"
               placeholder="document ID"
               type="text"
               value={this.state.bagId}
+              maxlength={22}
               onIonChange={e =>
                 this.setState({
                   bagId: (e.target as HTMLInputElement).value,
@@ -246,6 +314,22 @@ class ModalUploadDocumentComponent extends React.Component<
             />
           </IonItem>
          
+            <IonItem className="attestation-step-select-attestor">
+              <IonLabel className="label">Request signature from:</IonLabel>
+              <ionic-selectable
+                className="label"
+                slot="end"
+                ref={this.state.attestorSelect}
+                id="port"
+                should-store-item-value="false"
+                is-multiple="false"
+                item-value-field="id"
+                item-text-field="name"
+                placeholder="Select One"
+                group-text-field="country.name"
+              ></ionic-selectable>
+            </IonItem>
+
             <IonItem>
               <IonLabel className="label">Request signature from:</IonLabel>
               <IonSelect color="primary" className="label" value={this.state.recipient} okText="Okay" cancelText="Dismiss" onIonChange={e => 
@@ -261,7 +345,7 @@ class ModalUploadDocumentComponent extends React.Component<
             <div
               className={`drop-area ${!!this.state.folder ? '' : ''}`}
             >
-              <textarea ref={this.saveRef} />
+              <textarea ref={this.saveRef} className="attestation-step-file"/>
                 <span>
                   <IonIcon icon={documentIcon} size="large" /> Drop your file
                 </span>
@@ -324,7 +408,7 @@ class ModalUploadDocumentComponent extends React.Component<
             })
             }
 
-            <IonItem>
+            <IonItem className="attestation-step-main-file">
               <IonLabel className="label">Main file:</IonLabel>
               <IonSelect color="primary" className="label" value={this.state.mainFile} okText="Okay" cancelText="Dismiss" onIonChange={e => 
                   this.setState({
@@ -354,7 +438,7 @@ class ModalUploadDocumentComponent extends React.Component<
           {this.state.folder ? (
             <IonItem>
               <IonButton
-                className="AddButton"
+                className="attestation-step-upload AddButton"
                 disabled={!this.state.folder || !this.state.bagId || !this.state.mainFile}
                 onClick={() => {
                   this.props.upload(
@@ -414,4 +498,4 @@ const ModalUploadDocument = connect(
   }
 )(ModalUploadDocumentComponent);
 
-export default withHistory(ModalUploadDocument);
+export default withTour(withHistory(ModalUploadDocument));
