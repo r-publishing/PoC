@@ -7,7 +7,7 @@ import { base64urlToJSON, encodeBase64Url } from 'dids/lib/utils'
 import { verifyJWS } from 'did-jwt'
 import { encodePayload } from 'dag-jose-utils'
 
-export default async (folder: Folder, s: string) => {
+const checkSignature = async (folder: Folder, s: string) => {
   const did = new DID({ resolver: { ...await getRchainResolver, ...KeyResolver.getResolver() } })
 
     const signature = folder.signatures[s];
@@ -18,7 +18,7 @@ export default async (folder: Folder, s: string) => {
     const included = Object.fromEntries(Object.entries(doc2.signatures).filter(([key, value]) => parseInt(key) < parseInt(s)));
     doc2.signatures = included;
 
-    const { cid, linkedBlock } = await encodePayload(doc2);
+    const { cid /*, linkedBlock*/ } = await encodePayload(doc2);
     const payloadCid = encodeBase64Url(cid.bytes)
 
     try {
@@ -34,3 +34,4 @@ export default async (folder: Folder, s: string) => {
     }
     return false;
 };
+export default checkSignature;

@@ -5,6 +5,11 @@
       "version": "2.1.2",
       "signature": "727fe80783afb3bb186694854fd3749e",
       "file": true
+    },
+    "key-did-provider-secp256k1": {
+      "signature": "91547f338a924da92ecb6ca34d192350",
+      "file": true,
+      "replaced": "https://github.com/TheoXD/key-did-provider-secp256k1.git#jwe"
     }
   }
 }

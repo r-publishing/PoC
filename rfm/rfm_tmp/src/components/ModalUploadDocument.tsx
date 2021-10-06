@@ -17,7 +17,7 @@ import {
   IonItemOption,
   IonTextarea
 } from '@ionic/react';
-import { document as documentIcon, trash, create } from 'ionicons/icons';
+import { document as documentIcon, trash, /* create */ } from 'ionicons/icons';
 import { useHistory, RouteComponentProps } from 'react-router';
 
 import {
@@ -162,7 +162,7 @@ class ModalUploadDocumentComponent extends React.Component<
 
     this.setState({ dropErrors: [] });
 
-    Array.from(files).map(file => {
+    Array.from(files).forEach(file => {
       var r = new FileReader();
       try {
         r.onloadend = async function(e) {
@@ -310,7 +310,7 @@ class ModalUploadDocumentComponent extends React.Component<
           )}
 
 {
-            Object.keys(this.state?.files || {}).map(filename => {
+            Object.keys(this.state?.files || {}).forEach(filename => {
               const file = this.state.files[filename];
               if (file) {
                 return (

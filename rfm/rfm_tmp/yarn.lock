@@ -1250,6 +1250,11 @@
   resolved "https://registry.yarnpkg.com/@capacitor/haptics/-/haptics-1.0.3.tgz#f839f6809ae707aab66591d8efafd8881dd6397d"
   integrity sha512-RPV8kd4bY7sdmssXMkrg9v0HrjJZoCkbVk5ygbTByM+Yxl/1qqQUkEnBzCsA48tJHQz4ddTMjtpBEblS+GWUsw==
 
+"@capacitor/ios@^3.1.2":
+  version "3.2.4"
+  resolved "https://registry.yarnpkg.com/@capacitor/ios/-/ios-3.2.4.tgz#6b6c156d20a3bf143c56cd6184910f23eff9fdd1"
+  integrity sha512-d9ECeZC2uknOGB/IHaapBvuUSpYoM0J202M8Fw4OBPAkc26ysvMreHoCWCB0nd0leks53biI6DJdS60/VbYTWg==
+
 "@capacitor/keyboard@^1.0.2":
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/@capacitor/keyboard/-/keyboard-1.0.3.tgz#a706f014b3c04d956fcdff03a89ab93de620a50e"
@@ -9372,9 +9377,8 @@ key-did-provider-ed25519@^1.0.0:
     rpc-utils "^0.3.4"
     uint8arrays "^2.1.5"
 
-"key-did-provider-secp256k1@https://github.com/TheoXD/key-did-provider-secp256k1.git#jwe":
+"key-did-provider-secp256k1@file:.yalc/key-did-provider-secp256k1":
   version "0.1.0"
-  resolved "https://github.com/TheoXD/key-did-provider-secp256k1.git#296dc378490c4de89733342035d2df5360abffaa"
   dependencies:
     did-jwt "^4.8.1"
     eciesjs "^0.3.9"

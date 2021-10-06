@@ -13,9 +13,8 @@ import { RouterState } from 'connected-react-router';
 
 import {
   FingerprintAIO,
-  FingerprintOptions
+  //FingerprintOptions
 } from "@ionic-native/fingerprint-aio/";
-import { rejects } from 'assert';
 
 import { DID, JWSSignature } from 'dids';
 

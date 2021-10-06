@@ -4,23 +4,23 @@ import {
   IonLoading,
   IonButtons,
   IonButton,
-  IonProgressBar,
-  IonIcon,
+  //IonProgressBar,
+  //IonIcon,
   IonLabel,
   IonItem,
   IonInput,
-  IonCard,
-  IonCardContent
+  //IonCard,
+  //IonCardContent
 } from '@ionic/react';
-import { closeCircle, downloadOutline } from 'ionicons/icons';
+//import { closeCircle, downloadOutline } from 'ionicons/icons';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 import { useHistory } from 'react-router';
-import { Page, pdfjs, Document as PdfDocument } from 'react-pdf';
+import { /*Page,*/ pdfjs, /*Document as PdfDocument*/ } from 'react-pdf';
 
-import QRCodeComponent from './QRCodeComponent';
+//import QRCodeComponent from './QRCodeComponent';
 import checkSignature from '../utils/checkSignature';
-import { State, Folder, HistoryState, getPlatform } from '../store';
+import { State, HistoryState, getPlatform } from '../store';
 
 import './ModalDocument.scoped.css';
 import { addressFromPurseId } from 'src/utils/addressFromPurseId';
@@ -43,24 +43,27 @@ interface ModalDocumentProps {
   reupload: (resitryUri: string, bagId: string) => void;
   publish: (resitryUri: string, bagId: string, price: number) => void;
 }
-
+/*
 interface DocumentInfo {
   numPages: number;
 }
+*/
 
 const ModalDocumentComponent: React.FC<ModalDocumentProps> = (
   props: ModalDocumentProps
 ) => {
   
   const history = useHistory();
-  const pdfcontent64 = '';
-  const [page, setPage] = useState<number>();
+  //const pdfcontent64 = '';
+  //const [page, setPage] = useState<number>();
 
-  const [numPages, setNumPages] = useState<number>();
+  //const [numPages, setNumPages] = useState<number>();
   const [price, setPrice] = useState<number>();
+  /*
   function onDocumentLoadSuccess(docInfo: DocumentInfo) {
     setNumPages(docInfo.numPages);
   }
+  */
 
   pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version
     }/pdf.worker.js`;
@@ -68,10 +71,11 @@ const ModalDocumentComponent: React.FC<ModalDocumentProps> = (
   useEffect(() => {
     props.loadBag(props.registryUri, props.bagId, props.state);
   });
-
+  /*
   const renderLoading = () => {
     return <IonProgressBar color="secondary" type="indeterminate" />;
   };
+  */
 
   const address = addressFromPurseId(props.registryUri, props.bagId);
 
@@ -90,10 +94,9 @@ const ModalDocumentComponent: React.FC<ModalDocumentProps> = (
       })
     }));
   }
-
+  /*
   const doDownload = () => {
     if (props.platform === "web") {
-      /* TODO
       var fileUrl = "data:" + folder.mimeType + ";base64," + folder.data;
 
       fetch(fileUrl).then(response => response.blob()).then(blob => {
@@ -105,12 +108,12 @@ const ModalDocumentComponent: React.FC<ModalDocumentProps> = (
         window.document.body.appendChild(link);
         link.click();
       });
-      */
     }
     else {
       //TODO
     }
   };
+  */
 
   const folder = props.bagsData[address];
   let lastSignature: string | undefined = undefined;

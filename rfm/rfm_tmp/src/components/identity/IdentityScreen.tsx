@@ -111,4 +111,3 @@ const IdentityScreen = connect(
 )(IdentityScreenComponent);
 
 export default IdentityScreen;
-

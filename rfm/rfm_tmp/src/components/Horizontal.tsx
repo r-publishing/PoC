@@ -7,10 +7,10 @@ import {
   IonRefresherContent,
   IonSearchbar,
   IonButton,
-  IonIcon,
+  //IonIcon,
 } from '@ionic/react';
 import { RefresherEventDetail } from '@ionic/core';
-import { refreshOutline } from 'ionicons/icons';
+//import { refreshOutline } from 'ionicons/icons';
 
 import { useHistory } from 'react-router';
 import './Horizontal.scoped.css';

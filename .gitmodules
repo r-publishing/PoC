@@ -1,6 +1,0 @@
-[submodule "rdev-rpublishing"]
-	path = rdev-rpublishing
-	url = https://github.com/Bill-Kunj/rdev-rpublishing
-[submodule "rchain-token"]
-	path = rchain-token
-	url = https://github.com/fabcotech/rchain-token

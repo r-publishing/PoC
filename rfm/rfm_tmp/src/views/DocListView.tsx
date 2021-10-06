@@ -5,7 +5,7 @@ import { useHistory } from 'react-router';
 
 import {
   IonContent,
-  IonProgressBar,
+  //IonProgressBar,
   IonFab,
   IonFabButton,
   IonIcon,
@@ -43,7 +43,7 @@ declare global {
   }
 }
 */
-
+/*
 const renderLoading = () => {
   return <IonProgressBar color="secondary" type="indeterminate" />;
 };
@@ -51,6 +51,7 @@ const renderLoading = () => {
 type TRouteParams = {
   uri: string; // since it route params
 };
+*/
 interface DockListViewProps {
   connected: string;
   registryUri: string;
@@ -68,7 +69,7 @@ interface DockListViewProps {
 const DockListViewComponent: React.FC<DockListViewProps> = props => {
   const history = useHistory();
 
-  const identity = localStorage.getItem('publisher');
+  //const identity = localStorage.getItem('publisher');
 
   const scanQRCode = () => {
     (window as any).cordova.plugins.barcodeScanner.scan(

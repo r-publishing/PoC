@@ -21,11 +21,9 @@ import './App.scss';
 import './App.scoped.css';
 import { Bag, HistoryState } from './store';
 
-import { ReactComponent as RChainLogo } from './assets/rchain.svg';
-
 import IdentityScreen from './components/identity/IdentityScreen';
 
-import { personCircle, closeCircleOutline, pin } from 'ionicons/icons';
+import { personCircle, closeCircleOutline } from 'ionicons/icons';
 
 import { Device } from "@capacitor/device";
 import Eve from './assets/eve.png';
@@ -53,10 +51,11 @@ const AppComponent: React.FC<AppProps> = props => {
 
     props.setUser(identity);
     console.log(identity);
-
+  /*
   const shortenName = () => {
     return "did:rchain:" + props.registryUri?.substring(0, 6) + "..." + props.registryUri?.substring(48, 54)
   }
+  */
 
   const ToggleIdentityView = () => {
     setShowIdentity(!showIdentity);
@@ -67,9 +66,7 @@ const AppComponent: React.FC<AppProps> = props => {
     Device.getInfo().then(info => {
       props.setPlatform(info.platform);
     });
-  }, []);
-
-  const slides = React.useRef(null);
+  });
 
   const slideOpts: Record<string, unknown> = {
     initialSlide: 0,
