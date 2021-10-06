@@ -27,10 +27,11 @@ import { Dispatch } from 'redux';
 import { Bag, Folder, HistoryState } from '../store';
 import './MarketItem.scoped.css';
 
-import { document as documentIcon, trash, create, checkmarkCircle, pin, wifi, wine, warning, walk } from 'ionicons/icons';
+import { document as documentIcon, trash, create, checkmarkCircle } from 'ionicons/icons';
 import { bagIdFromAddress } from '../utils/bagIdFromAddress';
 
 interface MarketItemProps {
+  
   bag: Bag;
   registryUri: string;
   id: string;
@@ -47,6 +48,7 @@ const MarketItemComponent: React.FC<MarketItemProps> = (
   const identity = localStorage.getItem('wallet');
   const history = useHistory();
 
+  console.log(props.folder);
   return (
     <IonItemSliding className="container">
       <IonItemOptions side="end">
@@ -64,20 +66,19 @@ const MarketItemComponent: React.FC<MarketItemProps> = (
         </IonItemOption>
       </IonItemOptions>
       {
-        <IonItem
+        <IonCard color="grey"
           className={`${
             !props.onlyCompleted &&
             Object.keys(props.folder.signatures).length > 1
               ? 'with-parent'
               : ''
           } ${props.completed ? 'success' : 'secondary'}`}
-          detail={false}
         >
           <div className="mainContainer">
             <div className="IconContainer">
               {Object.keys(props.folder.files).map(filename => {
                 const file = props.folder.files[filename];
-                console.log(file);
+                //console.log(file);
                 return ['image/png', 'image/jpg', 'image/jpeg'].includes(
                   file.mimeType
                 ) ? (
@@ -126,7 +127,7 @@ const MarketItemComponent: React.FC<MarketItemProps> = (
                 </IonLabel>
             </div>
           </div>
-        </IonItem>
+        </IonCard>
       }
     </IonItemSliding>
    

@@ -20,15 +20,13 @@ const { createPursesTerm } = require('rchain-token');
 
 const uploadBagData = function*(action: {
   type: string;
-  payload: { folder: Folder; bagId: string; recipient: string; price: number, mainFile: string };
+  payload: { folder: Folder; bagId: string; description: string, mainFileResolution: string, recipient: string; price: number, mainFile: string };
 }) {
   console.log('upload-bag-data', action.payload);
   let recipient = action.payload.recipient;
   const folder = action.payload.folder;
   const newBagId = action.payload.bagId;
   const state: HistoryState = store.getState();
-
-  console.log(state);
 
   const publicKey = state.reducer.publicKey;
   const privateKey = yield getPrivateKey(state);
@@ -53,6 +51,8 @@ const uploadBagData = function*(action: {
     files: folder.files,
     signatures: folder.signatures,
     date: folder.date,
+    description: action.payload.description,
+    resolution: action.payload.mainFileResolution,
     scheme: {
       '0': recipientDid,
       '1': 'did:rchain:' + state.reducer.registryUri + "/" + state.reducer.user
