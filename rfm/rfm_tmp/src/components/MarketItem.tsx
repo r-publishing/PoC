@@ -8,7 +8,6 @@ import {
   IonItemOptions,
   IonItemOption,
   IonButton,
-  /*
   IonPage,
   IonHeader,
   IonCard,
@@ -19,7 +18,6 @@ import {
   IonCardContent,
   IonContent,
   IonCardHeader
-  */
 } from '@ionic/react';
 //import { Card, Button } from 'react-bootstrap';
 
