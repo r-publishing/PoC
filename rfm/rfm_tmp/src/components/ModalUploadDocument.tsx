@@ -8,13 +8,14 @@ import {
   IonLabel,
   IonInput,
   IonIcon,
+  IonRadioGroup,
+  IonRadio,
   IonButtons,
   IonButton,
   IonItemSliding,
   IonItemOptions,
   IonItemOption,
-  IonSelect,
-  IonSelectOption
+  IonTextarea
 } from '@ionic/react';
 import { document as documentIcon, trash, /* create */ } from 'ionicons/icons';
 import { useHistory, RouteComponentProps } from 'react-router';
@@ -35,6 +36,7 @@ import { FileSelect } from "capacitor-file-select";
 
 //Instead of deprecated withRouter
 export const withHistory = (Component: any) => {
+  
   return (props: any) => {
     const history = useHistory();
 
@@ -46,13 +48,15 @@ interface ModalUploadDocumentProps extends RouteComponentProps {
   state: HistoryState;
   publicKey: string;
   bags: { [bagId: string]: Bag };
-  upload: (bagId: string, folder: Folder, did: string, files: any/*, price: string*/) => void;
+  upload: (bagId: string, folder: Folder, did: string, files: any, mainFileResolution: string, description: string | null | undefined) => void;
   platform: string;
   //recipient: string;
 }
 interface ModalUploadDocumentState {
   recipient: string;
   mainFile: string;
+  description: string | null | undefined;
+  mainFileResolution: string;
   bagId: string;
   dropErrors: string[];
   folder: undefined | Folder;
@@ -79,6 +83,8 @@ class ModalUploadDocumentComponent extends React.Component<
       folder: undefined,
       recipient: '',
       mainFile: '',
+      description: '',
+      mainFileResolution: '',
       bagId: '',
       dropErrors: [],
       platform: props.platform,
@@ -211,31 +217,32 @@ class ModalUploadDocumentComponent extends React.Component<
   //   }
 
   render() {
+    console.log(this.state);
     return (
       <IonContent class="modal-document">
         <IonTitle class="upload-to-the-blockchain">
-          Upload to the blockchain
+          Create new item
         </IonTitle>
 
         <IonButtons className="ButtonArray">
-          <IonButton
+          <IonButton className="close"
             color="primary"
             onClick={() => {
               this.props.history.replace('/doc', { direction: 'back' });
             }}
           >
-            Close
+            x
           </IonButton>
         </IonButtons>
 
         <IonContent className="inner">
           <IonItem>
             <IonLabel className="label" position="floating">
-              Enter name of document
+              Enter name of item*
             </IonLabel>
             <IonInput
               className="label"
-              placeholder="document ID"
+              placeholder="Item name"
               type="text"
               value={this.state.bagId}
               onIonChange={e =>
@@ -245,25 +252,45 @@ class ModalUploadDocumentComponent extends React.Component<
               }
             />
           </IonItem>
+
+          <IonItem>
+            <IonLabel className="label" position="floating">
+              Give a brief story about your item
+            </IonLabel>
+            <IonTextarea className="description"
+              placeholder="Provide a brief description"
+              value={this.state.description}
+              onIonChange={e =>
+                this.setState({
+                  description: (e.detail.value),
+                })
+              }
+            ></IonTextarea>
+          </IonItem>
          
+          <IonItem>
+            <IonLabel className="custom-radio">Select Attestor:</IonLabel>
+            <IonRadioGroup value={this.state.recipient} onIonChange={e => this.setState({
+              recipient: (e.detail.value),
+            })}>
+          
             <IonItem>
-              <IonLabel className="label">Request signature from:</IonLabel>
-              <IonSelect color="primary" className="label" value={this.state.recipient} okText="Okay" cancelText="Dismiss" onIonChange={e => 
-                  this.setState({
-                    recipient: (e.target as HTMLInputElement).value,
-                  })
-              }>
-                <IonSelectOption value="attestor">Attestor</IonSelectOption>
-              </IonSelect>
+              <IonLabel className="custom-radio">Attestor</IonLabel>
+              <IonRadio slot="start" value="attestor" />
+            </IonItem>
+
+          </IonRadioGroup>
             </IonItem>
 
           {this.props.platform === 'web' ? (
+            
             <div
               className={`drop-area ${!!this.state.folder ? '' : ''}`}
             >
               <textarea ref={this.saveRef} />
-                <span>
-                  <IonIcon icon={documentIcon} size="large" /> Drop your file
+                <span className="img-upload">
+                <IonIcon icon={documentIcon} size="large" />
+                <p>Drag and Drop your file</p>
                 </span>
               </div>
           ) : (
@@ -326,18 +353,39 @@ class ModalUploadDocumentComponent extends React.Component<
 
             <IonItem>
               <IonLabel className="label">Main file:</IonLabel>
-              <IonSelect color="primary" className="label" value={this.state.mainFile} okText="Okay" cancelText="Dismiss" onIonChange={e => 
-                  this.setState({
-                    mainFile: (e.target as HTMLInputElement).value,
-                  })
-              }>
+             
                 {Object.keys(this.state?.files || {}).map(filename => {
-                    return(<IonSelectOption value={filename} key={filename}>{filename}</IonSelectOption>)
-                  })
-                }
-              </IonSelect>
+                    return(<IonRadioGroup value={this.state.mainFile} onIonChange={e => this.setState({
+              mainFile: (e.detail.value),
+            })}>
+          
+            <IonItem>
+                        <IonLabel className="custom-radio">{filename}</IonLabel>
+              <IonRadio slot="start" value={filename} />
             </IonItem>
 
+          </IonRadioGroup>)
+                  })
+                }
+            
+            </IonItem>
+
+           <IonItem>
+            <IonLabel className="label" position="floating">
+              Enter Resolution of main NFT item
+            </IonLabel>
+            <IonInput
+              className="label"
+              placeholder="1920 x 1080"
+              type="text"
+              value={this.state.mainFileResolution}
+              onIonChange={e =>
+                this.setState({
+                  mainFileResolution: (e.target as HTMLInputElement).value,
+                })
+              }
+            />
+          </IonItem>
           { /*this.state.folder ? (
             <div className="document">
               <div className="left">
@@ -361,7 +409,9 @@ class ModalUploadDocumentComponent extends React.Component<
                     this.state.bagId,
                     this.state.folder as Folder,
                     this.state.recipient as string,
-                    this.state.files
+                    this.state.files,
+                    this.state.mainFileResolution,
+                    this.state.description
                   );
                 }}
               >
@@ -397,7 +447,7 @@ const ModalUploadDocument = connect(
   },
   (dispatch: Dispatch) => {
     return {
-      upload: (bagId: string, folder: Folder, did: string, files: any/*, price: string*/) => {
+      upload: (bagId: string, folder: Folder, did: string, files: any, mainFileResolution: string, description: string | null | undefined) => {
         dispatch({
           type: 'UPLOAD',
           payload: {
@@ -406,7 +456,9 @@ const ModalUploadDocument = connect(
               ...folder,
               files: files
             },
-            recipient: did
+            recipient: did,
+            mainFileResolution,
+            description
           },
         });
       },

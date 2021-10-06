@@ -52,6 +52,7 @@ interface DocumentInfo {
 const ModalDocumentComponent: React.FC<ModalDocumentProps> = (
   props: ModalDocumentProps
 ) => {
+  
   const history = useHistory();
   //const pdfcontent64 = '';
   //const [page, setPage] = useState<number>();
@@ -77,6 +78,8 @@ const ModalDocumentComponent: React.FC<ModalDocumentProps> = (
   */
 
   const address = addressFromPurseId(props.registryUri, props.bagId);
+
+  console.log(props.bagsData[address]);
 
   const areSignaturesValid = async () => {
     return new Promise<boolean>((resolve => {

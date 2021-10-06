@@ -1,6 +1,6 @@
 ion-item-sliding.container {
   overflow: visible;
-  background: var(--ion-color-primary);
+  background: var(--ion-color-dark-tint);
 }
 ion-item {
   --padding-start: 0;
@@ -115,7 +115,7 @@ ion-footer ion-title {
 
 ion-button {
   border-radius: 5px;
-  border-color: var(--ion-color-primary);
+  border-color: var(--ion-color-dark-tint);
   --box-shadow: none;
   color: var(--ion-background-color);
   margin: auto;

@@ -32,7 +32,8 @@ const BagItemComponent: React.FC<BagItemProps> = ({
   id,
   awaitsSignature,
   completed,
-  folder
+  folder,
+  bag
 }) => {
   const history = useHistory();
   return (
