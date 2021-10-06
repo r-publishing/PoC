@@ -71,7 +71,7 @@ const MarketItemComponent: React.FC<MarketItemProps> = (
         </IonItemOption>
       </IonItemOptions>
       {
-        <IonCard color="grey"
+        <IonCard class="MarketItemCard"
           className={`${
             !props.onlyCompleted &&
             Object.keys(props.folder.signatures).length > 1

@@ -33,9 +33,9 @@ ion-icon {
   /* border-radius: 10px; */
 }
 
-ion-card {
+.MarketItemCard {
   max-width: 26em;
-  background: var(--ion-color-dark-tint);
+  background: #f7f7f7;
 }
 
 .labelContainer {
