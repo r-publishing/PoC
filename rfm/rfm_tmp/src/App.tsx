@@ -27,6 +27,8 @@ import { personCircle, closeCircleOutline } from 'ionicons/icons';
 
 import { Device } from "@capacitor/device";
 import Eve from './assets/eve.png';
+//import axios from 'axios';
+import queryString from 'query-string';
 
 const LoginView = React.lazy(() => import('./views/LoginView'));
 const DockListView = React.lazy(() => import('./views/DocListView'));
@@ -43,9 +45,20 @@ interface AppProps {
   setUser: (user: string) => void;
 }
 
+interface Demo {
+  id: string;
+  masterRegistryUri: string;
+  publisherPrivKey: string;
+  attestorPrivKey: string;
+  alicePrivKey: string;
+  bobPrivKey: string;
+}
+
 const AppComponent: React.FC<AppProps> = props => {
   const redfill = React.useRef(null);
   const [showIdentity, setShowIdentity] = useState(false);
+  const [demo, setDemo] = useState<Demo>();
+
 
   const identity: any = localStorage.getItem('user'); //TODO
 
@@ -61,6 +74,44 @@ const AppComponent: React.FC<AppProps> = props => {
     setShowIdentity(!showIdentity);
     console.info(showIdentity);
   };
+
+  useEffect(() => {
+    const params = queryString.parse(window.location.search) || {};
+    console.info("params:");
+    console.info(params);
+    
+    if (params && params.step) {
+      const step = params.step || '0';
+      localStorage.setItem('tour', step as string);
+    }
+
+    setDemo({
+      id: "3",
+      masterRegistryUri: "qhwd6uwips976ggwbra1w5dfwzdugddg3o63p5yqfdij6gand3ji5h",
+      publisherPrivKey: "8a398edcbe2941b05092ba433d3f37cdbdeb9b2583851f6eced292a1d767920b",
+      attestorPrivKey: "94eadda0b68e73ea64e25148cb790f4f3d473f87a4fb09ae5b3b6dd10e12dd5a",
+      alicePrivKey: "d63e87b73f99d5470b8a3df0393cf27c08c7e29e640a776ff3620f737114569a",
+      bobPrivKey: "eb648ea2a17ca1b8cbcb3ea6f4de3a6c3b40b30debaf4db8f5a4ab03d24b733d"
+    });
+    /*
+      const existingDemo = localStorage.getItem('demo');
+      if (existingDemo) {
+        const demo = JSON.parse(existingDemo);
+        console.info("DEMO:");
+        console.info(demo);
+        setDemo(demo);
+      }
+      else {
+        axios.get('http://localhost:8080/pop').then(function (response) {
+          // handle success
+          console.info(response);
+          const demo = response.data as Demo;
+          localStorage.setItem('demo', JSON.stringify(demo));
+          setDemo(demo);
+        })
+      }
+    */
+  }, []);
 
   useEffect(() => {
     Device.getInfo().then(info => {
@@ -95,7 +146,7 @@ const AppComponent: React.FC<AppProps> = props => {
           path="/user"
           render={rprops => (
             <Suspense fallback={<IonLoading isOpen={true} />}>
-              <LoginView action="user" key={rprops.location.pathname} />
+              <LoginView action="user" key={rprops.location.pathname} demo={demo}/>
             </Suspense>
           )}
         />
@@ -104,7 +155,7 @@ const AppComponent: React.FC<AppProps> = props => {
           path="/user/new"
           render={rprops => (
             <Suspense fallback={<IonLoading isOpen={true} />}>
-              <LoginView action="new" key={rprops.location.pathname} />
+              <LoginView action="new" key={rprops.location.pathname} demo={demo}/>
             </Suspense>
           )}
         />
@@ -113,7 +164,7 @@ const AppComponent: React.FC<AppProps> = props => {
           path="/user/restore"
           render={rprops => (
             <Suspense fallback={<IonLoading isOpen={true} />}>
-              <LoginView action="restore" key={rprops.location.pathname} />
+              <LoginView action="restore" key={rprops.location.pathname} demo={demo}/>
             </Suspense>
           )}
         />
@@ -122,7 +173,7 @@ const AppComponent: React.FC<AppProps> = props => {
           exact
           render={rprops => (
             <Suspense fallback={<IonLoading isOpen={true} />}>
-              <LoginView action="user" key={rprops.location.pathname} />
+              <LoginView action="user" key={rprops.location.pathname} demo={demo}/>
             </Suspense>
           )}
         />
@@ -130,7 +181,7 @@ const AppComponent: React.FC<AppProps> = props => {
           path="*"
           render={rprops => (
             <Suspense fallback={<IonLoading isOpen={true} />}>
-              <LoginView action="user" key={rprops.location.pathname} />
+              <LoginView action="user" key={rprops.location.pathname} demo={demo}/>
             </Suspense>
           )}
         />
@@ -139,7 +190,7 @@ const AppComponent: React.FC<AppProps> = props => {
           path="*"
           render={rprops => (
             <Suspense fallback={<IonLoading isOpen={true} />}>
-              <LoginView action="user" key={rprops.location.pathname} />
+              <LoginView action="user" key={rprops.location.pathname} demo={demo}/>
             </Suspense>
           )}
         />
@@ -154,7 +205,7 @@ const AppComponent: React.FC<AppProps> = props => {
       <img className="EveSignature" src={Eve} alt="Eve Arnold" />
       <IonHeader no-border no-shadow className="ion-no-border">
         <IonToolbar className="noSafeAreaPaddingTop">
-          <IonTitle className="main-title" 
+          <IonTitle
             onClick={() => {
            reload()
           }}
@@ -208,7 +259,7 @@ const AppComponent: React.FC<AppProps> = props => {
         { /*<RChainLogo className="BackgroundLogo" /> */ }
 
         {
-          (identity === "buyer") ? (
+          (identity === "buyer" || identity === "buyer2") ? (
                   <Suspense fallback={<IonLoading isOpen={true} />}>
                     <PublicStore
                       registryUri={props.registryUri as string}

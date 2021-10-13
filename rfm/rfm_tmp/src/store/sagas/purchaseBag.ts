@@ -20,7 +20,7 @@ const { purchaseTerm, readPursesDataTerm } = require('rchain-token');
 
 const purchaseBag = function*(action: {
   type: string;
-  payload: { bagId: string; registryUri: string, price: number };
+  payload: { bagId: string; registryUri: string, price: number, step: string };
 }) {
   console.log('purchase-bag', action.payload);
   const state: HistoryState = store.getState();
@@ -148,6 +148,7 @@ const purchaseBag = function*(action: {
     }
     setTimeout(() => { notify() }, 15000);
 
+    localStorage.setItem('tour', action.payload.step);
     setTimeout(() => {
       window.location.reload();
     }, 15000);

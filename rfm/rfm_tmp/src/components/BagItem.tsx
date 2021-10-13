@@ -25,6 +25,7 @@ interface BagItemProps {
   completed: boolean;
   onlyCompleted: boolean;
   folder: Folder;
+  pos: string;
 }
 
 const BagItemComponent: React.FC<BagItemProps> = ({
@@ -33,11 +34,12 @@ const BagItemComponent: React.FC<BagItemProps> = ({
   awaitsSignature,
   completed,
   folder,
-  bag
+  bag,
+  pos
 }) => {
   const history = useHistory();
   return (
-    <IonItemSliding className="container">
+    <IonItemSliding className="container" disabled>
       <IonItemOptions side="end">
         <IonItemOption
           color="secondary"
@@ -53,7 +55,8 @@ const BagItemComponent: React.FC<BagItemProps> = ({
         </IonItemOption>
       </IonItemOptions>
       <IonItem
-        className={`${(!onlyCompleted && Object.keys(folder.signatures).length > 1) ? 'with-parent' : ''} ${completed ? 'success' : 'secondary'}`}
+        // eslint-disable-next-line no-useless-concat
+        className={`${(!onlyCompleted && Object.keys(folder.signatures).length > 1) ? 'with-parent' : ''} ${completed ? 'attested' + ' pos_' + pos : 'not_attested' + ' pos_' + pos}`}
         detail={false}
         button
         onClick={() => {

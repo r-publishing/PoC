@@ -8,6 +8,7 @@ http://ionicframework.com/docs/theming/ */
    */
 
   body {
+    --color: #000;
     --ion-text-color: #04111d;
     /** primary **/
     --ion-color-primary: #04111d;

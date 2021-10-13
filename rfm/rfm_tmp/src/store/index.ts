@@ -51,9 +51,12 @@ export type HistoryState = CombinedState<{
 
 export interface Bag {
   n: string;
+  id: string;
   quantity: number;
   price: undefined | number;
   publicKey: string;
+  timestamp: number;
+  boxId: string;
 }
 export interface Signature extends JWSSignature {
   payload: string;

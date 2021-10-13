@@ -21,11 +21,25 @@ import '@ionic/react/css/display.css';
 
 /* Theme variables */
 import './theme/variables.css';
-import './theme/darkvariables.css';
+//import './theme/darkvariables.css';
+
+import { TourProvider } from '@reactour/tour'
+
+// configure the tour
+const steps = [
+  {
+    selector: '.attestation-step-start',
+    content: 'Login as Publisher to upload a photo.',
+  },
+  
+  // ...
+]
 
 const App: React.FC = () => (
   <IonApp>
-    <MainApp></MainApp>
+    <TourProvider steps={steps} showBadge={false} showCloseButton={false} showPrevNextButtons={false} showNavigation={true} onClickMask={() => {console.info("closing")}}>
+      <MainApp></MainApp>
+    </TourProvider>
   </IonApp>
 );
 

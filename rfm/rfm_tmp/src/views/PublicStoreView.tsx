@@ -1,6 +1,6 @@
 import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useHistory } from 'react-router';
 
 import {
@@ -28,6 +28,7 @@ import ModalDocument from '../components/ModalDocument';
 
 import { parse } from 'did-resolver';
 import './PublicStore.scoped.css';
+import { useTour } from '@reactour/tour';
 
 interface PublicDocumentView {
   connected: string;
@@ -42,11 +43,62 @@ interface PublicDocumentView {
   documentsCompleted: State['bagsData'];
   searchText: string;
   platform: string;
+  user: string;
 }
+
+const purchaseSteps = [
+  { selector: '.MarketCard', content: 'The NFT is now for sale.' },
+  { selector: '.PurchaseButton', content: 'Press this button to purchase this NFT.' },
+]
+
+const purchasedSteps = [
+  { selector: '.MarketCard', content: 'Congratulations! You now own this NFT!' },
+  { selector: '.SellButton', content: 'You can put this item back to the store and resell it for a higher price.' },
+]
+
+const purchased2Steps = [
+  { selector: '.MarketCard', content: 'Congratulations! You now own this NFT!' },
+]
 
 const PublicStoreComponent: React.FC<PublicDocumentView> = props => {
   const identity = localStorage.getItem('wallet');
   const history = useHistory();
+
+  const { /* isOpen, currentStep, steps,*/ setIsOpen, setCurrentStep, setSteps } = useTour()
+  useEffect(() => {
+    if (props.user === "buyer") {
+      if (localStorage.getItem('tour')) {
+        const menuTourStep = parseInt(localStorage.getItem('tour') || '0');
+        if (menuTourStep < 4) {
+          setSteps(purchaseSteps);
+        }
+        else {
+          setSteps(purchasedSteps);
+        }
+      }
+    }
+
+    if (props.user === "buyer2") {
+      if (localStorage.getItem('tour')) {
+        const menuTourStep = parseInt(localStorage.getItem('tour') || '0');
+        if (menuTourStep < 6) {
+          setSteps(purchaseSteps);
+        }
+        else {
+          setSteps(purchased2Steps);
+        }
+      }
+    }
+    setTimeout(() => {
+      setIsOpen(false);
+      setCurrentStep(0);
+      setIsOpen(true);
+      setTimeout(() => {
+        setCurrentStep(1);
+      }, 5000)
+    }, 100)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const scanQRCode = () => {
     (window as any).cordova.plugins.barcodeScanner.scan(
@@ -162,6 +214,7 @@ export const PublicStore = connect(
       isLoading: state.reducer.isLoading,
       searchText: state.reducer.searchText,
       platform: state.reducer.platform,
+      user: state.reducer.user,
     };
   },
   (dispatch: Dispatch) => {

@@ -1,5 +1,5 @@
 import { connect } from 'react-redux';
-import React from 'react';
+import React, { /* useEffect */ } from 'react';
 import { Dispatch } from 'redux';
 import {
   IonItem,
@@ -15,6 +15,7 @@ import { RefresherEventDetail } from '@ionic/core';
 import { useHistory } from 'react-router';
 import './Horizontal.scoped.css';
 import { HistoryState } from '../store';
+//import { useTour } from '@reactour/tour';
 
 interface HorizontalProps {
   registryUri: string;
@@ -59,7 +60,7 @@ const HorizontalComponent: React.FC<HorizontalProps> = props => {
         >
           {props.user === "publisher" ? (
           <IonButton
-            className="AddButton with-border"
+            className="attestation-step-upload-button AddButton with-border"
             icon-only
             slot="start"
             color="none"

@@ -14,7 +14,6 @@ import { encodeBase64 } from 'dids/lib/utils';
 import { Folder, store } from '../';
 import replacer from '../../utils/replacer';
 import { getPrivateKey, HistoryState } from '../index';
-
 const { createPursesTerm } = require('rchain-token');
 
 
@@ -159,6 +158,8 @@ const uploadBagData = function*(action: {
         })
     }
   setTimeout(() => { notify() }, 15000);
+  
+  localStorage.setItem('tour', '1');
   
   setTimeout(() => {
     window.location.reload();

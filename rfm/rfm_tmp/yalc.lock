@@ -2,8 +2,7 @@
   "version": "v1",
   "packages": {
     "rchain-did-resolver": {
-      "version": "2.1.2",
-      "signature": "727fe80783afb3bb186694854fd3749e",
+      "signature": "4081e7f00ff35fb74afd3b94116f27fd",
       "file": true
     },
     "key-did-provider-secp256k1": {

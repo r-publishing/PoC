@@ -9,7 +9,7 @@ import {
   IonLabel,
   IonItem,
   IonInput,
-  IonChip,
+  IonChip
   //IonCard,
   //IonCardContent
 } from '@ionic/react';
@@ -25,6 +25,8 @@ import { State, HistoryState, getPlatform } from '../store';
 
 import './ModalDocument.scoped.css';
 import { addressFromPurseId } from 'src/utils/addressFromPurseId';
+
+import { useTour } from '@reactour/tour';
 
 export interface KeyPair {
   privateKey: any;
@@ -50,11 +52,36 @@ interface DocumentInfo {
 }
 */
 
+
+const attestSteps = [
+  { selector: '.SignatureRequiredBtn', content: 'If the photo looks legit you can now attest it and put your signature.' },
+]
+
+const publisherSteps = [
+  { selector: '.attestation-step-file', content: 'Pick a photo you wish to upload.' },
+  //{ selector: '.attestation-step-main-file', content: 'Set your photo as your main file.' },
+  { selector: '.attestation-step-name', content: 'Choose a name for your NFT.' },
+  //{ selector: '.attestation-step-select-attestor', content: 'Click here and appoint an attestor.',
+    //highlightedSelectors: ["ionic-selectable-modal.ion-page"],
+    //mutationObservables: ["ion-modal.show-modal.modal-interactive"]
+  //},
+  { selector: '.attestation-step-upload', content: 'Now press upload to begin attestation process.' },
+  { selector: '.attestation-step-set-price', content: "How much REV do you think it's worth? Probably not a lot but let's put a large number anyway." },
+]
+
+const publishSteps = [
+  { selector: '.attestation-step-set-price', content: "How much do you think it is worth? Probably not a lot but let's put a large number anyway." },
+  { selector: '.attestation-step-set-price', content: "Come on now... don't be greedy!" },
+  { selector: '.attestation-step-do-publish', content: "Now press it. Press it for glory!." },
+]
+
+
 const ModalDocumentComponent: React.FC<ModalDocumentProps> = (
   props: ModalDocumentProps
 ) => {
   
   const history = useHistory();
+  const priceInput = React.useRef<HTMLIonInputElement | null>(null);
   //const pdfcontent64 = '';
   //const [page, setPage] = useState<number>();
 
@@ -69,9 +96,70 @@ const ModalDocumentComponent: React.FC<ModalDocumentProps> = (
   pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version
     }/pdf.worker.js`;
 
+  const { /* isOpen,*/ currentStep, /* steps,*/ setIsOpen, setCurrentStep, setSteps } = useTour()
+  //useEffect(() => {
+//
+  //}, []);
+    /*
   useEffect(() => {
+    console.info("PRICE UPDATE");
+    if (price && price >= 10200) {
+      setCurrentStep(currentStep + 1);
+    }
+  }, [price])
+*/
+  useEffect(() => {
+    setTimeout(() => {
+      if (props.user === "publisher") {
+        if (localStorage.getItem('tour')) {
+          const menuTourStep = parseInt(localStorage.getItem('tour') || '0');
+          if (menuTourStep === 0) {
+            setTimeout(() => {
+              setIsOpen(false);
+              setSteps(publisherSteps);
+              setCurrentStep(0);
+              setIsOpen(true);
+            }, 100);
+          }
+          if (menuTourStep === 2) {
+            setTimeout(() => {
+              setIsOpen(false);
+              setSteps(publishSteps);
+              setCurrentStep(0);
+              setIsOpen(true);
+              if (priceInput && priceInput.current) {
+                console.info("SET PRICE");
+                (priceInput.current as HTMLIonInputElement).value = 20;
+                (priceInput.current as HTMLIonInputElement).setFocus();
+                setTimeout(() => {
+                  setCurrentStep(2);
+                  console.info("currentStep: ");
+                  console.info(currentStep);
+                }, 6000);
+              }
+            }, 100);
+          }
+          //else {
+          //  setIsOpen(false);
+          //}
+        }
+        else {
+        setSteps(publisherSteps);
+        }
+      }
+      if (props.user === "attestor") {
+        setSteps(attestSteps);
+      }
+      setTimeout(() => {
+        setIsOpen(false);
+        setCurrentStep(0);
+        setIsOpen(true);
+      }, 888)
+    }, 100);
+
     props.loadBag(props.registryUri, props.bagId, props.state);
-  });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   /*
   const renderLoading = () => {
     return <IonProgressBar color="secondary" type="indeterminate" />;
@@ -257,19 +345,29 @@ const ModalDocumentComponent: React.FC<ModalDocumentProps> = (
                   Enter price
                 </IonLabel>
                 <IonInput
+                  ref={priceInput} 
+                  class="attestation-step-set-price"
                   color="primary"
                   placeholder="enter price(in rev) of nft"
                   type="number"
                   value={price}
-                  onIonChange={e =>
-                    setPrice(parseInt((e.target as HTMLInputElement).value))
+                  onKeyPress={e => {
+                    if (e.key === 'Enter' && price && price > 0) {
+                      setCurrentStep(currentStep + 1);
+                    }
+                  }}
+                  onIonChange={e => {
+                    const inPrice = parseInt((e.target as HTMLInputElement).value);
+                      setPrice(inPrice)
+                    }
                   }
                 />
               </IonItem>
               <IonButton
-                className="SignatureRequiredBtn"
+                className="attestation-step-do-publish SignatureRequiredBtn"
                 size="default"
                 onClick={() => {
+                  setIsOpen(false);
                   props.publish(props.registryUri, props.bagId, price || 0);
                 }}
               >
@@ -284,6 +382,7 @@ const ModalDocumentComponent: React.FC<ModalDocumentProps> = (
               className="SignatureRequiredBtn"
               size="default"
               onClick={() => {
+                setIsOpen(false);
                 props.reupload(props.registryUri, props.bagId);
               }}
             >

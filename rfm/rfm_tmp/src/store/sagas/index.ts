@@ -7,6 +7,7 @@ import { uploadBagDataSaga } from './uploadBagData';
 import { reuploadBagDataSaga } from './reuploadBagData';
 import { publishBagDataSaga } from './publishBagData';
 import { purchaseBagSaga } from './purchaseBag';
+import { sellBagSaga } from './sellBag';
 
 export const sagas = function* rootSaga() {
   yield all([
@@ -17,5 +18,6 @@ export const sagas = function* rootSaga() {
     reuploadBagDataSaga(),
     publishBagDataSaga(),
     purchaseBagSaga(),
+    sellBagSaga(),
   ]);
 };
