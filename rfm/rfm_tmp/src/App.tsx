@@ -26,7 +26,7 @@ import IdentityScreen from './components/identity/IdentityScreen';
 import { personCircle, closeCircleOutline } from 'ionicons/icons';
 
 import { Device } from "@capacitor/device";
-;
+
 //import axios from 'axios';
 import queryString from 'query-string';
 
