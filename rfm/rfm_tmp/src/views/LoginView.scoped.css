@@ -13,20 +13,16 @@ ion-slides {
   border-radius: 5px;
 }
 
-.btn {
-  border: solid 1px var(--ion-color-secondary);
-  border-radius: 1em;
-  --box-shadow: none;
-}
 
 @media (prefers-color-scheme: dark) {
-  ion-button.ActionButton {
+  ion-button.btn {
+    --background: black;
     color: white;
   }
 }
 
 @media (prefers-color-scheme: light) {
-  ion-button.ActionButton {
+  ion-button.btn {
     color: black;
   }
 }
@@ -55,5 +51,16 @@ div.BottomBar {
   font-family: 'Poppins', sans-serif;
   width: 100%;
 }
+
+.btn:hover {
+  color: #fff;
+  --background: #494949;
+}
+
+.btn:active {
+  color: #121212;
+  --background: #fff;
+}
+
 
 

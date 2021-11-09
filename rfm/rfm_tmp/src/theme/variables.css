@@ -5,8 +5,9 @@ http://ionicframework.com/docs/theming/ */
 :root {
   --color: #000;
   --ion-text-color: #04111d;
-  --ion-background-color: white;
-  
+  --ion-main-header-bg: #04111d;
+  --ion-main-header-color: #121212;
+
   /** primary **/
   --ion-color-primary: #04111d;
   --ion-color-primary-rgb: 0, 0, 0;
@@ -73,8 +74,11 @@ http://ionicframework.com/docs/theming/ */
   --ion-color-light-shade: #1e2023;
   --ion-color-light-tint: #4d4e4e;
 
+  --ion-background-color: white;
+
+  --ion-font-family: 'Poppins', sans-serif;
+
   --ion-toolbar-background: #1f1f1f;
-  --ion-toolbar-color: white;
 
   --ion-tab-bar-background: #1f1f1f;
 }

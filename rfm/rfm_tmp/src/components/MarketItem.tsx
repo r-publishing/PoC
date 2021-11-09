@@ -142,7 +142,7 @@ const MarketItemComponent: React.FC<MarketItemProps> = (
               })}
             </div>
             <div className="labelContainer">
-              {identity && props.bag.boxId === props.user ? (
+              {identity? (
                 undefined
               ) : (
                 <IonButton
@@ -161,7 +161,7 @@ const MarketItemComponent: React.FC<MarketItemProps> = (
                 </IonButton>
               )}
 
-              {identity && props.bag.boxId !== props.user ? (
+              {!identity? (
                   undefined
               ) : (
                 <div>
@@ -209,7 +209,6 @@ const MarketItemComponent: React.FC<MarketItemProps> = (
           </IonCard>
       }
     </IonItemSliding>
-   
   );
 };
 

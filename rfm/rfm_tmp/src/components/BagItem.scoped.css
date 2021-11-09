@@ -85,3 +85,13 @@ ion-button.AddButton {
   margin-right: 5px;
   background: var(--ion-color-primary);
 }
+
+ion-button.not-attested {
+  border-color: var(--ion-color-danger-tint);
+  background: var(--ion-color-danger-tint);
+}
+
+ion-button.attested {
+  border-color: var(--ion-color-danger-tint);
+  background: var(--ion-color-danger-tint);
+}

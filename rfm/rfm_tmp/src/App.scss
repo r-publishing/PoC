@@ -117,7 +117,7 @@ ion-slides.IdentityList {
   bottom: 50%;
   border-top: 0.7em solid transparent;
   border-bottom: 0.7em solid transparent;
-  border-left: 1em solid var(--ion-color-light);
+  border-left: 1em solid #121212;
 }
 
 .ArrowLeft {
@@ -127,7 +127,7 @@ ion-slides.IdentityList {
   bottom: 50%;
   border-top: 0.7em solid transparent;
   border-bottom: 0.7em solid transparent;
-  border-right: 1em solid var(--ion-color-light);
+  border-right: 1em solid #121212;
 }
 
 .ps5 {
@@ -164,7 +164,7 @@ ion-button.with-border {
 }
 
 .react-pdf__Page__textContent {
-  border-bottom: 0.1em solid black;
+  border-bottom: 0.1em solid #121212;
 }
 
 .UserInfo {
@@ -176,7 +176,7 @@ ion-button.with-border {
 }
 
 .alert-title {
-  color: black !important;
+  color: #121212 !important;
 }
 
 .alert-radio-label {
@@ -190,6 +190,11 @@ ion-button.with-border {
   right: 0;
   width: 5em;
   margin-right: 2em;
+}
+
+.main-title {
+  color: #fff;
+  font-weight: lighter;
 }
 
 ionic-selectable {

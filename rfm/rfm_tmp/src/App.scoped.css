@@ -15,3 +15,8 @@
 ion-toolbar {
   /* margin-bottom: 20px; */
 }
+
+.title {
+  color: white;
+  cursor: pointer;
+}

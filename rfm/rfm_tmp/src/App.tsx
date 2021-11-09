@@ -205,11 +205,11 @@ const AppComponent: React.FC<AppProps> = props => {
       
       <IonHeader no-border no-shadow className="ion-no-border">
         <IonToolbar className="noSafeAreaPaddingTop">
-          <IonTitle
+          <IonTitle className="title"
             onClick={() => {
            reload()
           }}
-          >RChain NFT</IonTitle>
+          >RChain Publishing</IonTitle>
           <IonButton
             slot="end"
             icon-only

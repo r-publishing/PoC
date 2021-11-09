@@ -156,7 +156,7 @@ const PublicStoreComponent: React.FC<PublicDocumentView> = props => {
           <h2>NFT Marketplace</h2>
         </div>
       )}
-      <IonContent>
+      <IonContent className="container">
         {props.platform !== 'web' && false ? (
           <IonFab vertical="bottom" horizontal="end" slot="fixed">
             <IonFabButton color="tertiary" onClick={scanQRCode}>
@@ -175,7 +175,8 @@ const PublicStoreComponent: React.FC<PublicDocumentView> = props => {
           <>
             {!props.isLoading
               ? props.documentsAddressesInOrder.map(address => {
-                  return (
+                return (
+                    <div className="container">
                     <MarketItem
                       key={address}
                       registryUri={props.registryUri}
@@ -188,6 +189,7 @@ const PublicStoreComponent: React.FC<PublicDocumentView> = props => {
                       }
                       completed={!!props.documentsCompleted[address]}
                     />
+                    </div>
                   );
                 })
               : [...Array(10)].map((x, i) => (
