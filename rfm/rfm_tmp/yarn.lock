@@ -1720,7 +1720,7 @@
     gud "^1.0.0"
     warning "^4.0.3"
 
-"@ionic-native/core@^5.31.1":
+"@ionic-native/core@^5.36.0":
   version "5.36.0"
   resolved "https://registry.yarnpkg.com/@ionic-native/core/-/core-5.36.0.tgz#712c40a530b119b0039e8d16cb577899f50541d4"
   integrity sha512-lOrkktadlKYbYf1LrDyAtsu1JnQ0oCCdkOU7iHQ8oXnNOkMwobFfD2m62F1CoOr0u9LIkpYnZSPjng8lZbmbNw==
