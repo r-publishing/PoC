@@ -15,6 +15,7 @@ new
   priceCh,
   newIdCh,
   dataCh,
+  //feesCh,
   purseIdCh,
   contractIdCh,
 
@@ -37,6 +38,7 @@ in {
   quantityCh!!(${payload.quantity}) |
   publicKeyCh!!("${payload.publicKey}") |
   dataCh!!("${payload.data}") |
+  //feesCh!!("PURCHASE_PURSE_${payload.fee ? "(" + payload.fee.join(',') + ")" : "Nil"}S") |
 
   for (boxCh <<- @(*deployerId, "rchain-token-box", "${payload.masterRegistryUri}", "${payload.boxId}")) {
 
@@ -68,6 +70,7 @@ in {
             @quantity <- quantityCh;
             @newId <- newIdCh;
             @data <- dataCh
+            //@fees <- feesCh
           ) {
 
             stdout!({
@@ -131,6 +134,7 @@ in {
                               "contractId": contractId,
                               "purseId": purseId,
                               "data": data,
+                              //"fees": fees,
                               "quantity": quantity,
                               "merge": merge,
                               "newId": newId,
@@ -174,7 +178,6 @@ in {
                                 }
                               }
                               _ => {
-                                basket!({ "status": "completed" }) |
                                 stdout!("completed, purchase successful") |
                                 boxCh!(("WITHDRAW", { "contractId": "${payload.contractId}", "quantity": ${payload.withdrawQuantity}, "toBoxId": "${payload.toBoxId}", "purseId": newId, "merge": ${payload.merge} }, *withdrawReturnCh)) |
                                 for (@r <- withdrawReturnCh) {

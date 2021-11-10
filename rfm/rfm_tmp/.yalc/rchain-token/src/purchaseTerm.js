@@ -15,6 +15,7 @@ new
   priceCh,
   newIdCh,
   dataCh,
+  //feesCh,
   purseIdCh,
   contractIdCh,
 
@@ -36,6 +37,7 @@ in {
   quantityCh!!(${payload.quantity}) |
   publicKeyCh!!("${payload.publicKey}") |
   dataCh!!("${payload.data}") |
+  //feesCh!!("PURCHASE_PURSE_${payload.fee ? "(" + payload.fee.join(',') + ")" : "Nil"}S") |
 
   for (boxCh <<- @(*deployerId, "rchain-token-box", "${payload.masterRegistryUri}", "${payload.boxId}")) {
 
@@ -67,6 +69,7 @@ in {
             @quantity <- quantityCh;
             @newId <- newIdCh;
             @data <- dataCh
+            //@fees <- feesCh
           ) {
 
             stdout!({

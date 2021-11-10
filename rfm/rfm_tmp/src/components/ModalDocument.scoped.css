@@ -108,3 +108,7 @@
 .Files {
   display: flex;
 }
+
+.LockButton {
+  --box-shadow: none;
+}

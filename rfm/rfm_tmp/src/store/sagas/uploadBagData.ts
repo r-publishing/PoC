@@ -13,9 +13,25 @@ import { encodeBase64 } from 'dids/lib/utils';
 
 import { Folder, store } from '../';
 import replacer from '../../utils/replacer';
+import prepareDeploy from '../../utils/prepareDeploy';
+import waitForUnforgeable from '../../utils/waitForUnforgeable';
+//import validAfterBlockNumber from '../../utils/validAfterBlockNumber';
 import { getPrivateKey, HistoryState } from '../index';
 const { createPursesTerm } = require('rchain-token');
 
+function notify() {
+  Swal.fire({
+      title: 'Success!',
+      text: 'Upload complete',
+      showConfirmButton: false,
+      timer: 5000,
+      didClose: () => {
+        localStorage.setItem('tour', '1');
+        window.location.reload();
+      }
+  })
+  
+}
 
 const uploadBagData = function*(action: {
   type: string;
@@ -83,7 +99,7 @@ const uploadBagData = function*(action: {
         boxId: recipient,
         type: '0',
         quantity: 1,
-        price: null,
+        price: null
       }
     },
     data: {
@@ -113,6 +129,14 @@ const uploadBagData = function*(action: {
   }
 
   const timestamp = new Date().getTime();
+  
+  const pd = yield prepareDeploy(
+    state.reducer.readOnlyUrl,
+    publicKey as string,
+    timestamp
+  );
+
+
   const deployOptions = yield rchainToolkit.utils.getDeployOptions(
     'secp256k1',
     timestamp,
@@ -127,9 +151,16 @@ const uploadBagData = function*(action: {
 
   try {
     const deployResponse = yield rchainToolkit.http.deploy(state.reducer.validatorUrl, deployOptions);
-    if (!deployResponse.startsWith('"Success!')) {
-      console.log(deployResponse);
+    if (deployResponse.startsWith('"Success!')) {
+      Swal.fire({
+        text: 'Upload is in progress',
+        showConfirmButton: false,
+      });
     }
+
+    yield waitForUnforgeable(JSON.parse(pd).names[0], state.reducer.readOnlyUrl);
+    notify();
+
   }
   catch(err) {
     console.info("Unable to deploy");
@@ -141,29 +172,9 @@ const uploadBagData = function*(action: {
     payload: {},
   });
 
-  Swal.fire({
-    text: 'Upload is in progress',
-    showConfirmButton: false,
-    timer: 15000,
-  });
-
 
   console.log(state);
- function notify() {
-        Swal.fire({
-            title: 'Success!',
-            text: 'Upload complete',
-            showConfirmButton: false,
-            timer: 10000,
-        })
-    }
-  setTimeout(() => { notify() }, 15000);
   
-  localStorage.setItem('tour', '1');
-  
-  setTimeout(() => {
-    window.location.reload();
-  }, 15000);
   return true;
 };
 

@@ -1,0 +1,10 @@
+{
+  "1": {
+    "boxId": "inbox",
+    "id": "1",
+    "price": 1,
+    "quantity": 99999999,
+    "timestamp": 1629729872367,
+    "type": "MAIL"
+  }
+}

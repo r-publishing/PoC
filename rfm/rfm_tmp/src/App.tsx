@@ -27,7 +27,7 @@ import { personCircle, closeCircleOutline } from 'ionicons/icons';
 
 import { Device } from "@capacitor/device";
 
-//import axios from 'axios';
+import axios from 'axios';
 import queryString from 'query-string';
 
 const LoginView = React.lazy(() => import('./views/LoginView'));
@@ -84,16 +84,17 @@ const AppComponent: React.FC<AppProps> = props => {
       const step = params.step || '0';
       localStorage.setItem('tour', step as string);
     }
-
-    setDemo({
-      id: "4",
-      masterRegistryUri: "nkpck3fsfiy5cyk4a1z1kzhafgo4gbcrw87hk8pq8he6jgarhsp9fa",
-      publisherPrivKey: "bf3570f06e372531efc593aafe285b2d62e37d5a7e5fd0ddf79529e0c51d4733",
-      attestorPrivKey: "bc16d755140a26889901c6b787a31be52f404ff8edb2160b0de448f2cbb3af8d",
-      alicePrivKey: "66a54df9b639784d6cac0ac927fa6b6b86aba8fe3334efebc2be80df6ada5140",
-      bobPrivKey: "9a1be4377b43734c2829512c2be4cc3ad976b396ddabb2eed7e10eeac2394089"
-    });
     /*
+    setDemo({
+      id: "2",
+      masterRegistryUri: "uq8guq3eazq8a3gsqzicnb86tep6jah46fcb5ga4s4o3uwgic3xjix",
+      publisherPrivKey: "97b1744400bf6e7163418f3f67325921e8bc504bd09f3f20a5d864a41d05dfd9",
+      attestorPrivKey: "f1b59bd5dc94fe4c34d1ea4862183b44d4f075036733f319b0e8cd7a1d1c6dc5",
+      alicePrivKey: "ea6163135d7090822009495a526c124d6943c5d57b218e430dbce55c32a7aa8e",
+      bobPrivKey: "429e2d42008ca2c29da5826902d875086087e02fc7e3d00bd7f38ecac33dcdd8"
+    });
+    */
+    
       const existingDemo = localStorage.getItem('demo');
       if (existingDemo) {
         const demo = JSON.parse(existingDemo);
@@ -102,7 +103,7 @@ const AppComponent: React.FC<AppProps> = props => {
         setDemo(demo);
       }
       else {
-        axios.get('http://localhost:8080/pop').then(function (response) {
+        axios.get('https://thirsty-villani-4b6e68.netlify.app/pop').then(function (response) {
           // handle success
           console.info(response);
           const demo = response.data as Demo;
@@ -110,7 +111,7 @@ const AppComponent: React.FC<AppProps> = props => {
           setDemo(demo);
         })
       }
-    */
+    
   }, []);
 
   useEffect(() => {

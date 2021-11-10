@@ -4,7 +4,7 @@ import * as rchainToolkit from 'rchain-toolkit';
 import React, { useEffect /*, useState, Suspense, useEffect */ } from 'react';
 //import { useHistory } from 'react-router';
 //import { Link } from 'react-router-dom';
-import Swal from 'sweetalert2';
+//import Swal from 'sweetalert2';
 
 import {
   IonContent,

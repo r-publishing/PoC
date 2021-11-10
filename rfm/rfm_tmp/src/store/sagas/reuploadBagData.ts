@@ -12,9 +12,25 @@ import { encodeBase64 } from 'dids/lib/utils';
 
 import { Folder, store, getBagsData } from '../';
 import replacer from '../../utils/replacer';
+import prepareDeploy from '../../utils/prepareDeploy';
+import waitForUnforgeable from '../../utils/waitForUnforgeable';
+//import validAfterBlockNumber from '../../utils/validAfterBlockNumber';
 import { getPrivateKey, HistoryState } from '../index';
 
 const { purchaseAndWithdrawTerm } = require('rchain-token');
+
+function notify() {
+  Swal.fire({
+      title: 'Success!',
+      text: 'Attestation complete',
+      showConfirmButton: false,
+      timer: 5000,
+      didClose: () => {
+        localStorage.setItem('tour', '2');
+        window.location.reload();
+      }
+  })
+}
 
 const reuploadBagData = function*(action: {
   type: string;
@@ -129,6 +145,13 @@ const reuploadBagData = function*(action: {
   }
   
   const timestamp = new Date().getTime();
+  //const vab = yield validAfterBlockNumber(state.reducer.readOnlyUrl);
+  const pd = yield prepareDeploy(
+    state.reducer.readOnlyUrl,
+    publicKey as string,
+    timestamp
+  );
+
   const deployOptions = yield rchainToolkit.utils.getDeployOptions(
     'secp256k1',
     timestamp,
@@ -139,34 +162,24 @@ const reuploadBagData = function*(action: {
     4000000000,
     validAfterBlockNumberResponse
   );
-  yield rchainToolkit.http.deploy(state.reducer.validatorUrl, deployOptions);
+  const deployResponse = yield rchainToolkit.http.deploy(state.reducer.validatorUrl, deployOptions);
+  if (deployResponse.startsWith('"Success!')) {
+    Swal.fire({
+      text: 'Attestation is in progress',
+      showConfirmButton: false
+    });
+  }
+
+  yield waitForUnforgeable(JSON.parse(pd).names[0], state.reducer.readOnlyUrl);
+
+  notify();
 
   yield put({
     type: 'PURCHASE_BAG_COMPLETED',
     payload: {},
   });
 
-  Swal.fire({
-    text: 'Attestation is in progress',
-    showConfirmButton: false,
-    timer: 15000,
-  });
 
-
- function notify() {
-        Swal.fire({
-            title: 'Success!',
-            text: 'Attestation complete',
-            showConfirmButton: false,
-            timer: 10000,
-        })
-    }
-    setTimeout(() => { notify() }, 15000);
-
-  localStorage.setItem('tour', '2');
-  setTimeout(() => {
-    window.location.reload();
-  }, 15000);
   return true;
 };
 

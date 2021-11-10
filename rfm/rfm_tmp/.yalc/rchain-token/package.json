@@ -1,6 +1,6 @@
 {
   "name": "rchain-token",
-  "version": "10.0.0+2ba75bdd",
+  "version": "10.0.0+c50635cf",
   "description": "Fungibles and non-fungibles tokens on the RChain blockchain",
   "main": "src/index.js",
   "scripts": {

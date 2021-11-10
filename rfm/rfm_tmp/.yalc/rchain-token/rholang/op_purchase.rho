@@ -11,6 +11,7 @@ new
   priceCh,
   newIdCh,
   dataCh,
+  //feesCh,
   purseIdCh,
   contractIdCh,
 
@@ -32,6 +33,7 @@ in {
   quantityCh!!(QUANTITY) |
   publicKeyCh!!("PUBLIC_KEY") |
   dataCh!!("PURCHASE_PURSE_DATA") |
+  //feesCh!!("PURCHASE_PURSE_FEES") |
 
   for (boxCh <<- @(*deployerId, "rchain-token-box", "MASTER_REGISTRY_URI", "BOX_ID")) {
 
@@ -63,6 +65,7 @@ in {
             @quantity <- quantityCh;
             @newId <- newIdCh;
             @data <- dataCh
+            //@fees <- feesCh
           ) {
 
             stdout!({

@@ -1,0 +1,18 @@
+{
+  "0": {
+    "boxId": "publisher",
+    "id": "0",
+    "price": 1,
+    "quantity": 9999999999999,
+    "timestamp": 1629899985917,
+    "type": "0"
+  },
+  "Marilyn0": {
+    "boxId": "publisher",
+    "id": "Marilyn0",
+    "price": null,
+    "quantity": 1,
+    "timestamp": 1629906153733,
+    "type": "0"
+  }
+}

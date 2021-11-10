@@ -12,13 +12,32 @@ import { encodeBase64 } from 'dids/lib/utils';
 
 import { Folder, store, getBagsData } from '../';
 import replacer from '../../utils/replacer';
+import prepareDeploy from '../../utils/prepareDeploy';
+import waitForUnforgeable from '../../utils/waitForUnforgeable';
+//import validAfterBlockNumber from '../../utils/validAfterBlockNumber';
 import { getPrivateKey, HistoryState } from '../index';
 
 const { createPursesTerm } = require('rchain-token');
 
+function notify() {
+  Swal.fire({
+      title: 'Success!',
+      text: 'Publishing complete',
+      showConfirmButton: false,
+      timer: 5000,
+      didClose: () => {
+        localStorage.setItem('tour', '3');
+        window.location.reload();
+      }
+  })
+}
+
 const publishBagData = function*(action: {
   type: string;
-  payload: { bagId: string; registryUri: string, price: number};
+  payload: { bagId: string; registryUri: string, price: number, fees: Array<{
+    revAddress: string;
+    fraction100: number;
+}>};
 }) {
   console.log('reuploload-bag-data', action.payload);
   const state: HistoryState = store.getState();
@@ -26,6 +45,7 @@ const publishBagData = function*(action: {
 
   const publicKey = state.reducer.publicKey;
   const privateKey = yield getPrivateKey(state);
+  //const revAddr = rchainToolkit.utils.revAddressFromPublicKey(publicKey || "");
 
   const did = new DID({
     resolver: { ...(yield getRchainResolver()), ...KeyResolver.getResolver() },
@@ -66,11 +86,12 @@ const publishBagData = function*(action: {
   const payload = {
     purses: {
       [newBagId]: {
-        id: newBagId, // will be ignored, contract is fugible contract
+        id: newBagId,
         boxId: state.reducer.user,
         type: '0',
         quantity: 1,
         price: parsedPriceInDust,
+        //fees: action.payload.fees
       }
     },
     data: {
@@ -98,6 +119,12 @@ const publishBagData = function*(action: {
   }
   
   const timestamp = new Date().getTime();
+  const pd = yield prepareDeploy(
+    state.reducer.readOnlyUrl,
+    publicKey as string,
+    timestamp
+  );
+
   const deployOptions = yield rchainToolkit.utils.getDeployOptions(
     'secp256k1',
     timestamp,
@@ -108,35 +135,24 @@ const publishBagData = function*(action: {
     4000000000,
     validAfterBlockNumberResponse
   );
-  yield rchainToolkit.http.deploy(state.reducer.validatorUrl, deployOptions);
+  const deployResponse = yield rchainToolkit.http.deploy(state.reducer.validatorUrl, deployOptions);
+  if (deployResponse.startsWith('"Success!')) {
+    Swal.fire({
+      text: 'Publishing is in progress',
+      showConfirmButton: false,
+    });
+  }
   
+  yield waitForUnforgeable(JSON.parse(pd).names[0], state.reducer.readOnlyUrl);
+
+  notify();
 
   yield put({
     type: 'PURCHASE_BAG_COMPLETED',
     payload: {},
   });
 
-  Swal.fire({
-    text: 'Publishing is in progress',
-    showConfirmButton: false,
-    timer: 15000,
-  });
 
-
- function notify() {
-        Swal.fire({
-            title: 'Success!',
-            text: 'Publishing complete',
-            showConfirmButton: false,
-            timer: 10000,
-        })
-    }
-    setTimeout(() => { notify() }, 15000);
-
-  localStorage.setItem('tour', '3');
-  setTimeout(() => {
-    window.location.reload();
-  }, 15000);
   return true;
 };
 

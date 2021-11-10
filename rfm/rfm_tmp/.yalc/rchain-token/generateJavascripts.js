@@ -31,6 +31,7 @@ const replaceEverything = (a) => {
       .replace('NEW_NONCE', '${payload.newNonce}')
       .replace('UPDATE_PURSE_DATAA', `\${payload.data}`)
       .replace('PURCHASE_PURSE_DATA', `\${payload.data}`)
+      .replace('"UPDATE_PURSE_FS"', `\${payload.fees}`)
       .replace(
         'ACTION_AFTER_PURCHASE',
         `\${payload.actionAfterPurchase || "PUBLIC_RECEIVE_PURSE"}`
@@ -207,6 +208,21 @@ module.exports.updatePurseDataTerm = (
   payload
 ) => {
   return \`${replaceEverything(updatePurseDataFile)}\`;
+};
+`
+);
+
+const updatePurseFeesFile = fs
+  .readFileSync('./rholang/op_update_purse_fees.rho')
+  .toString('utf8');
+
+fs.writeFileSync(
+  './src/updatePurseFeesTerm.js',
+  `/* GENERATED CODE, only edit rholang/*.rho files*/
+module.exports.updatePurseFeesTerm = (
+  payload
+) => {
+  return \`${replaceEverything(updatePurseFeesFile)}\`;
 };
 `
 );

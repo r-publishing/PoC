@@ -9,15 +9,23 @@ import {
   IonLabel,
   IonItem,
   IonInput,
-  IonChip
+  IonChip,
+  /*
+  IonItemSliding,
+  IonItemOption,
+  IonItemOptions,
+  IonIcon,
+  IonRange
+  */
   //IonCard,
-  //IonCardContent
+  //IonCardContent,
 } from '@ionic/react';
 //import { closeCircle, downloadOutline } from 'ionicons/icons';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 import { useHistory } from 'react-router';
 import { /*Page,*/ pdfjs, /*Document as PdfDocument*/ } from 'react-pdf';
+//import { trash, mailUnreadOutline, lockClosedOutline, lockOpenOutline } from 'ionicons/icons';
 
 //import QRCodeComponent from './QRCodeComponent';
 import checkSignature from '../utils/checkSignature';
@@ -27,6 +35,9 @@ import './ModalDocument.scoped.css';
 import { addressFromPurseId } from 'src/utils/addressFromPurseId';
 
 import { useTour } from '@reactour/tour';
+
+//import { getResolver as getRchainResolver, Resolver } from "rchain-did-resolver";
+//import * as rchainToolkit from 'rchain-toolkit';
 
 export interface KeyPair {
   privateKey: any;
@@ -44,7 +55,10 @@ interface ModalDocumentProps {
   user: string;
   loadBag: (registryUri: string, bagId: string, state: HistoryState) => void;
   reupload: (resitryUri: string, bagId: string) => void;
-  publish: (resitryUri: string, bagId: string, price: number) => void;
+  publish: (resitryUri: string, bagId: string, price: number, fees: Array<{
+    revAddress: string;
+    fraction100: number;
+}>) => void;
 }
 /*
 interface DocumentInfo {
@@ -88,6 +102,17 @@ const ModalDocumentComponent: React.FC<ModalDocumentProps> = (
   //const [numPages, setNumPages] = useState<number>();
   const [price, setPrice] = useState<number>();
   /*
+  const [recipientInput, setRecipientInput] = useState<string>();
+  const [revAddresses, setRevAddresses] = useState<Map<string, string>>(new Map<string, string>([
+  ]));
+
+  const [payees, setPayees] = useState<Map<string, {revAddress: string, fraction100: number}>>(new Map<string, {revAddress: string, fraction100: number}>([
+  ]));
+
+  const [distribution, setDistribution] = useState<number>(25);
+  */
+  const payees = new Map<string, {revAddress: string, fraction100: number}>([]); //TMP
+  /*
   function onDocumentLoadSuccess(docInfo: DocumentInfo) {
     setNumPages(docInfo.numPages);
   }
@@ -108,7 +133,9 @@ const ModalDocumentComponent: React.FC<ModalDocumentProps> = (
     }
   }, [price])
 */
+
   useEffect(() => {
+    
     setTimeout(() => {
       if (props.user === "publisher") {
         if (localStorage.getItem('tour')) {
@@ -156,6 +183,7 @@ const ModalDocumentComponent: React.FC<ModalDocumentProps> = (
         setIsOpen(true);
       }, 888)
     }, 100);
+    
 
     props.loadBag(props.registryUri, props.bagId, props.state);
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -165,6 +193,8 @@ const ModalDocumentComponent: React.FC<ModalDocumentProps> = (
     return <IonProgressBar color="secondary" type="indeterminate" />;
   };
   */
+
+  
 
   const address = addressFromPurseId(props.registryUri, props.bagId);
 
@@ -363,12 +393,102 @@ const ModalDocumentComponent: React.FC<ModalDocumentProps> = (
                   }
                 />
               </IonItem>
+              { /*
+              <IonItem>
+              <IonInput 
+                  class="attestation-step-set-revaddr"
+                  color="primary"
+                  placeholder="Add a recipient REV addr"
+                  type="text"
+                  value={recipientInput}
+                  onIonChange={e => {
+                    const inRecipient = (e.target as HTMLInputElement).value;
+                      setRecipientInput(inRecipient)
+                    }
+                  }
+                >
+                  <IonButton slot="end" onClick={async () => {
+                    console.info("CLICK");
+                    if (recipientInput) {
+                      let revAddr = "";
+                      console.info("recipientInput:");
+                      console.info(recipientInput);
+                      
+
+                      const resolver = new Resolver({
+                        ...getRchainResolver()
+                      });
+                      try {
+                        const parsed = await resolver.resolve("did:rchain:"+props.registryUri+"/" + recipientInput);
+                        
+                        const pubKey = parsed.publicKey[0].publicKeyHex;
+                        if (pubKey) {
+                          revAddr = rchainToolkit.utils.revAddressFromPublicKey(pubKey);
+                          console.info("REV ADDRESS:");
+                          console.info(revAddr);
+                        }
+
+                      }
+                      catch (err) {
+                        console.info("not a did");
+                      }
+                      
+                      setRevAddresses(new Map<string, string>([ [recipientInput, revAddr], ...revAddresses]));
+                      //setRevDistribution(new Map<string, number>([ [recipientInput, 25], ...revDistribution]));
+                      setPayees(new Map<string, {revAddress: string, fraction100: number}>([ [recipientInput, {"revAddress": revAddr, "fraction100": 100 * 100}], ...payees]));
+                      setRecipientInput("");
+                    }
+                  }}>+</IonButton>
+              </IonInput>
+              </IonItem>
+
+              */ }
+
+              {/*
+               [...payees.keys()].map( (val, index) => {
+                const revAddress = payees.get(val)?.revAddress as string;
+                const fraction = (payees?.get(val)?.fraction100 as number | 0) / 100;
+              return (
+              <IonItemSliding className="container" key={val}>
+                <IonItemOptions side="end">
+                  <IonItemOption
+                    color="danger"
+                    onClick={() => console.log('share clicked')}
+                  >
+                    <IonIcon icon={trash} size="large" />
+                  </IonItemOption>
+                </IonItemOptions>
+                <IonItem
+                  // eslint-disable-next-line no-useless-concat
+                  detail={false}
+                  button
+                >
+                  <IonLabel className="ion-text-wrap">
+                    {val}
+                  </IonLabel>
+                  <IonRange pin={true} value={fraction} onIonChange={e => {
+                    const newShare = e.detail.value as number * 100
+                    const share = new Map<string, {revAddress: string, fraction100: number}>([[val, {"revAddress": revAddress, "fraction100": newShare}]]);
+                    setPayees(new Map<string, {revAddress: string, fraction100: number}>([...payees, ...share]));
+
+                    console.info(payees);
+                  }
+                    } />
+                  <IonLabel>{fraction}%</IonLabel>
+                  <IonButton icon-only color="none" class="LockButton">
+                    <IonIcon icon={lockOpenOutline} size="small" color="light"/>
+                  </IonButton>
+                </IonItem>
+              </IonItemSliding>)
+              })
+              */}
+
               <IonButton
                 className="attestation-step-do-publish SignatureRequiredBtn"
                 size="default"
                 onClick={() => {
                   setIsOpen(false);
-                  props.publish(props.registryUri, props.bagId, price || 0);
+                  props.publish(props.registryUri, props.bagId, price || 0, [...payees.values()]);
                 }}
               >
                 Publish to Marketplace
@@ -427,13 +547,17 @@ const ModalDocument = connect(
           },
         });
       },
-      publish: (registryUri: string, bagId: string, price: number) => {
+      publish: (registryUri: string, bagId: string, price: number, fees: Array<{
+        revAddress: string;
+        fraction100: number;
+    }>) => {
         dispatch({
           type: 'PUBLISH_BAG_DATA',
           payload: {
             bagId: bagId,
             registryUri: registryUri,
-            price: price
+            price: price,
+            fees: fees
           },
         });
       },

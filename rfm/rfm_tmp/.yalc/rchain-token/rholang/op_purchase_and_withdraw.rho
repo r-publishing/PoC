@@ -11,6 +11,7 @@ new
   priceCh,
   newIdCh,
   dataCh,
+  //feesCh,
   purseIdCh,
   contractIdCh,
 
@@ -33,6 +34,7 @@ in {
   quantityCh!!(QUANTITY) |
   publicKeyCh!!("PUBLIC_KEY") |
   dataCh!!("PURCHASE_PURSE_DATA") |
+  //feesCh!!("PURCHASE_PURSE_FEES") |
 
   for (boxCh <<- @(*deployerId, "rchain-token-box", "MASTER_REGISTRY_URI", "BOX_ID")) {
 
@@ -64,6 +66,7 @@ in {
             @quantity <- quantityCh;
             @newId <- newIdCh;
             @data <- dataCh
+            //@fees <- feesCh
           ) {
 
             stdout!({
@@ -127,6 +130,7 @@ in {
                               "contractId": contractId,
                               "purseId": purseId,
                               "data": data,
+                              //"fees": fees,
                               "quantity": quantity,
                               "merge": merge,
                               "newId": newId,
@@ -170,7 +174,6 @@ in {
                                 }
                               }
                               _ => {
-                                basket!({ "status": "completed" }) |
                                 stdout!("completed, purchase successful") |
                                 boxCh!(("WITHDRAW", { "contractId": "CONTRACT_ID", "quantity": WITHDRAW_QUANTITY, "toBoxId": "TO_BOX_ID", "purseId": newId, "merge": MERGE }, *withdrawReturnCh)) |
                                 for (@r <- withdrawReturnCh) {

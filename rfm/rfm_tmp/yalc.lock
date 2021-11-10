@@ -1,14 +1,18 @@
 {
   "version": "v1",
   "packages": {
-    "rchain-did-resolver": {
-      "signature": "4081e7f00ff35fb74afd3b94116f27fd",
-      "file": true
-    },
     "key-did-provider-secp256k1": {
       "signature": "91547f338a924da92ecb6ca34d192350",
       "file": true,
       "replaced": "https://github.com/TheoXD/key-did-provider-secp256k1.git#jwe"
+    },
+    "rchain-token": {
+      "signature": "c50635cf00a014fa9d08b7d94054ac9b",
+      "file": true
+    },
+    "rchain-did-resolver": {
+      "signature": "4081e7f00ff35fb74afd3b94116f27fd",
+      "file": true
     }
   }
 }

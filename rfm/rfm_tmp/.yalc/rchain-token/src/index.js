@@ -14,8 +14,8 @@ const { readPursesDataTerm } = require('./readPursesDataTerm');
 const { updatePursePriceTerm } = require('./updatePursePriceTerm');
 const { renewTerm } = require('./renewTerm');
 const { purchaseTerm } = require('./purchaseTerm');
-const { purchaseAndWithdrawTerm } = require('./purchaseAndWithdrawTerm');
 const { withdrawTerm } = require('./withdrawTerm');
+const { purchaseAndWithdrawTerm } = require('./purchaseAndWithdrawTerm');
 
 // utils
 const { decodePurses } = require('./decodePurses');

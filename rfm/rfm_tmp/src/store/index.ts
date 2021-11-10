@@ -215,6 +215,10 @@ export const getPublicKey = createSelector(
   (state: HistoryState) => state,
   (state: HistoryState) => state.reducer.publicKey
 );
+export const getUser = createSelector(
+  (state: HistoryState) => state,
+  (state: HistoryState) => state.reducer.user
+);
 export const getPlatform = createSelector(
   (state: HistoryState) => state,
   (state: HistoryState) => state.reducer.platform
@@ -297,6 +301,30 @@ export const getDocumentsAddressesInOrder = createSelector(
     return addresses;
   }
 );
+
+export const getDocumentsAddressesForSale = createSelector(
+  getBags,
+  getDocumentsAddressesInOrder,
+  (bags: HistoryState['reducer']['bags'], $documentsAddressesInOrder) => {
+    const addresses = $documentsAddressesInOrder.filter((a) => {
+      let price = bags[a].price || 0;
+      return price > 0;
+    })
+    return addresses;
+  }
+);
+
+export const getOwnedDocumentsAddresses = createSelector(
+  getBags,
+  getUser,
+  getDocumentsAddressesInOrder,
+  (bags: HistoryState['reducer']['bags'], user: string, $documentsAddressesInOrder) => {
+    const addresses = $documentsAddressesInOrder.filter((a) => {
+      return bags[a].boxId === user;
+    })
+    return addresses;
+  }
+)
 
 export const getDocumentsAwaitingSignature = createSelector(
   getBagsData,
