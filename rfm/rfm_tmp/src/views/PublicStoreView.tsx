@@ -86,6 +86,8 @@ const PublicStoreComponent: React.FC<PublicDocumentView> = props => {
         }
         else {
           setSteps(purchased2Steps);
+          localStorage.removeItem('demo');
+          localStorage.setItem('tour', '0');
         }
       }
     }

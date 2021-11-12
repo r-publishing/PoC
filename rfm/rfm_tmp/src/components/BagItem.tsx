@@ -76,10 +76,10 @@ const BagItemComponent: React.FC<BagItemProps> = ({
           <h2>{bagIdFromAddress(id)}</h2>
         </IonLabel>
         {!publisher ? (
-          !awaitsSignature ? (
+          awaitsSignature ? (
             <IonButton className="AddButton">Needs attestation</IonButton>
           ) : (
-            <IonButton className="AddButton">already attested</IonButton>
+            <IonButton className="AddButton">Already attested</IonButton>
           )
         ) : (
           undefined
