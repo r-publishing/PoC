@@ -131,7 +131,7 @@ const reuploadBagData = function*(action: {
   did.deauthenticate();
   
   const term = purchaseAndWithdrawTerm(payload);
-  
+
   let validAfterBlockNumberResponse;
   try {
     validAfterBlockNumberResponse = JSON.parse(

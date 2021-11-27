@@ -43,14 +43,15 @@ const load = function* (action: { type: string; payload: any}) {
   const user = action.payload.user;
   const storeStr = action.payload.store;
 
-
   const term2 = readBoxTerm({ boxId: user, masterRegistryUri: registryUri });
+  
   const readBoxResult = yield rchainToolkit.http.exploreDeploy(
     state.reducer.readOnlyUrl,
     {
       term: term2
     }
   )
+  
   const box = rchainToolkit.utils.rhoValToJs(JSON.parse(readBoxResult).expr[0]);
 
   const pursesIds = Object.keys(box.purses).length > 0 ? box.purses[storeStr] : [];
@@ -59,15 +60,15 @@ const load = function* (action: { type: string; payload: any}) {
     contractId: storeStr,
     pursesIds: pursesIds || [],
   });
-
   const readAllPursesResult = yield rchainToolkit.http.exploreDeploy(
     state.reducer.readOnlyUrl,
     {
       term: term1
     }
   )
+  
 
-    const expr = JSON.parse(readAllPursesResult).expr;
+  const expr = JSON.parse(readAllPursesResult).expr;
   const boxData = rchainToolkit.utils.rhoValToJs(expr ? expr[0] : {});
 
   const purses =  boxData;
@@ -87,7 +88,6 @@ const load = function* (action: { type: string; payload: any}) {
       }
     )
   }
-
   const rchainTokenValues = rchainToolkit.utils.rhoValToJs(JSON.parse(readBoxResult).expr[0])
   
   if (["ios", "android"].includes(state.reducer.platform)) {
@@ -109,13 +109,12 @@ const load = function* (action: { type: string; payload: any}) {
      }
     SecureStoragePlugin.set(record)
   }
-
   const did = new DID({ resolver: { ...yield getRchainResolver(), ...KeyResolver.getResolver() } })
+  //const asArr = new Uint8Array(action.payload.privateKey.match(/.{1,2}/g).map((byte: string) => parseInt(byte, 16))).reduce((str, byte) => str + byte.toString(16).padStart(2, '0'), '');
   const authSecret = Buffer.from(action.payload.privateKey, 'hex');
+
   const provider = new Secp256k1Provider(authSecret)
-
   yield did.authenticate({ provider: provider })
-
   if (did.authenticated) {
     yield put(
       {
@@ -220,7 +219,6 @@ const load = function* (action: { type: string; payload: any}) {
       payload: newBagsData
     }
   );
-  console.log("this is init", newBagsData)
 
   }
   

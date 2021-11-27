@@ -15,7 +15,8 @@ import {
   IonIcon,
   IonSlides,
   IonSlide,
-  IonLabel
+  IonLabel,
+  IonImg
 } from '@ionic/react';
 import './App.scss';
 import './App.scoped.css';
@@ -29,6 +30,8 @@ import { Device } from "@capacitor/device";
 
 import axios from 'axios';
 import queryString from 'query-string';
+import { useTour } from '@reactour/tour';
+import Logo from './assets/logo.png';
 
 const LoginView = React.lazy(() => import('./views/LoginView'));
 const DockListView = React.lazy(() => import('./views/DocListView'));
@@ -59,6 +62,7 @@ const AppComponent: React.FC<AppProps> = props => {
   const [showIdentity, setShowIdentity] = useState(false);
   const [demo, setDemo] = useState<Demo>();
 
+  const { setIsOpen, setCurrentStep, setSteps, currentStep } = useTour();
 
   const identity: any = localStorage.getItem('user'); //TODO
 
@@ -96,7 +100,7 @@ const AppComponent: React.FC<AppProps> = props => {
     */
     
       const existingDemo = localStorage.getItem('demo');
-      if (existingDemo) {
+      if (existingDemo && Object.keys(existingDemo).length > 0) {
         const demo = JSON.parse(existingDemo);
         console.info("DEMO:");
         console.info(demo);
@@ -107,8 +111,11 @@ const AppComponent: React.FC<AppProps> = props => {
           // handle success
           console.info(response);
           const demo = response.data as Demo;
-          localStorage.setItem('demo', JSON.stringify(demo));
           setDemo(demo);
+          if (Object.keys(demo).length > 0) {
+            localStorage.setItem('demo', JSON.stringify(demo));
+            setIsOpen(true);
+          }
         })
       }
     
@@ -206,11 +213,13 @@ const AppComponent: React.FC<AppProps> = props => {
       
       <IonHeader no-border no-shadow className="ion-no-border">
         <IonToolbar className="noSafeAreaPaddingTop">
+          <IonImg className="RPCLogo" slot="start" src={Logo}></IonImg>
           <IonTitle className="title"
             onClick={() => {
            reload()
           }}
           >RChain Publishing</IonTitle>
+          
           <IonButton
             slot="end"
             icon-only

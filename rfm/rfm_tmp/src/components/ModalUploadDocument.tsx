@@ -78,6 +78,7 @@ interface ModalUploadDocumentState {
   platform: string;
   attestorSelect: React.RefObject<HTMLIonItemElement>;
   nameInput: React.RefObject<HTMLIonInputElement>;
+  isUploading: boolean;
   //price: string;
 }
 
@@ -90,10 +91,10 @@ let folder: Folder = {
 
 const componentSteps = [
   { selector: '.attestation-step-file', content: 'Pick a photo you wish to upload.' },
-  { selector: '.attestation-step-name', content: 'Choose a name for your NFT.' },
+  { selector: '.attestation-step-name', content: 'Choose a name for your new NFT.' },
   { selector: '.attestation-step-main-file', content: 'Set your photo as your main file.' },
   { selector: '.attestation-step-select-attestor', content: 'Click here and appoint an attestor.'},
-  { selector: '.attestation-step-upload', content: 'Now press upload to begin attestation process.' },
+  { selector: '.attestation-step-upload', content: 'Now press upload to begin the attestation process.' },
 ]
 
 
@@ -119,7 +120,8 @@ class ModalUploadDocumentComponent extends React.Component<
       platform: props.platform,
       files: {},
       attestorSelect: React.createRef(),
-      nameInput: React.createRef()
+      nameInput: React.createRef(),
+      isUploading: false
     };
   }
   
@@ -158,7 +160,7 @@ class ModalUploadDocumentComponent extends React.Component<
     const that = this;
     let selectedFile = await FileSelect.select({
       multiple: false,
-      extensions: ['.jpg', '.png', '.pdf', '.jpeg'],
+      extensions: ['.jpg', '.png', '.jpeg'],
     });
 
     const file0 = selectedFile.files[0];
@@ -191,6 +193,16 @@ class ModalUploadDocumentComponent extends React.Component<
   saveRef = (el: HTMLTextAreaElement) => {
     this.dropEl = el;
     if (this.dropEl) {
+      this.dropEl.addEventListener('dragenter', (e: DragEvent) => {
+        e.stopPropagation();
+        e.preventDefault();
+      });
+
+      this.dropEl.addEventListener('dragover', (e: DragEvent) => {
+        e.stopPropagation();
+        e.preventDefault();
+      });
+    
       this.dropEl.addEventListener('drop', (e: DragEvent) => {
         e.preventDefault();
         e.stopPropagation();
@@ -201,6 +213,7 @@ class ModalUploadDocumentComponent extends React.Component<
   };
 
   onDrop = (e: React.DragEvent<HTMLTextAreaElement>) => {
+    console.info("DROP");
     const that = this;
     e.preventDefault();
     var files = e.dataTransfer.files;
@@ -214,43 +227,27 @@ class ModalUploadDocumentComponent extends React.Component<
     this.setState({ dropErrors: [] });
 
     Array.from(files).forEach(file => {
-      var r = new FileReader();
-      try {
-        r.onloadend = async function(e) {
-          if (!e || !e.target || typeof r.result !== 'string') {
-            return;
-          }
-
-          that.setState({
-            files: {
-              ...that.state.files,
-              [file.name]: {
-                name: file.name,
-                mimeType: file.type,
-                data: r.result.split(',')[1],
-              }
-            },
-          });
-  
-        };
-      } catch (e) {
-        this.setState({ dropErrors: ['Error parsing file'] });
-      }
-  
-      r.readAsDataURL(file);
-
-      setTimeout( () => {
-        this.props.setCurrentStep(this.props.currentStep + 1);
-        if (this.state.nameInput.current) {
-          // eslint-disable-next-line react/no-direct-mutation-state
-          this.state.nameInput.current.value = "Unseen Photo";
-          this.state.nameInput.current?.setFocus();
-          setTimeout( () => {
-            this.props.setCurrentStep(this.props.currentStep + 1);
-          }, 5000);
-        }
-      }, 100);
+      this.handleFile(file);
     })
+
+    console.info("Done handling files");
+
+    setTimeout( () => {
+      console.info("After handling files timeout");
+      this.props.setCurrentStep(this.props.currentStep + 1);
+      if (this.state.nameInput.current) {
+        // eslint-disable-next-line react/no-direct-mutation-state
+        //this.state.nameInput.current.value = "Unseen Photo";
+        this.state.nameInput.current?.setFocus();
+        this.setState({
+          bagId: "Unseen Photo",
+        })
+        
+        setTimeout( () => {
+          this.props.setCurrentStep(this.props.currentStep + 1);
+        }, 5000);
+      }
+    }, 100);
 
     //folder.files = this.state.files;
     //folder.mainFile = folder.mainFile || Object.keys(files)[0];
@@ -267,6 +264,84 @@ class ModalUploadDocumentComponent extends React.Component<
     })
     
   };
+
+  handleFile = (file: File) => {
+    const that = this;
+    var r = new FileReader();
+      
+    //If file type is not an image, continue
+    if (!file.type.match('image.*')) {
+      return;
+    }
+
+    try {
+      r.onloadend = async function(e) {
+        if (!e || !e.target || typeof r.result !== 'string') {
+          return;
+        }
+
+        that.setState({
+          files: {
+            ...that.state.files,
+            [file.name]: {
+              name: file.name,
+              mimeType: file.type,
+              data: r.result.split(',')[1],
+            }
+          },
+        });
+
+      };
+    } catch (e) {
+      this.setState({ dropErrors: ['Error parsing file'] });
+    }
+
+    r.readAsDataURL(file);
+  }
+
+  onFileChange = (e: any) => {
+    if ((e.target as HTMLInputElement).files) {
+      var files = e.target?.files as FileList;
+
+      //var filesArr = Array.prototype.slice.call(files);
+      //console.log(filesArr);
+
+      Array.from(files).forEach(file => {
+        this.handleFile(file);
+      })
+
+      setTimeout( () => {
+        this.props.setCurrentStep(this.props.currentStep + 1);
+        if (this.state.nameInput.current) {
+          // eslint-disable-next-line react/no-direct-mutation-state
+          //this.state.nameInput.current.value = "Unseen Photo";
+          this.state.nameInput.current?.setFocus();
+
+          this.setState({
+            bagId: "Unseen Photo",
+          })
+
+          setTimeout( () => {
+            this.props.setCurrentStep(this.props.currentStep + 1);
+          }, 5000);
+        }
+      }, 100);
+  
+      //folder.files = this.state.files;
+      //folder.mainFile = folder.mainFile || Object.keys(files)[0];
+    
+      this.setState({
+        folder: {
+          ...folder,
+          mainFile: folder.mainFile || Object.keys(files)[0]
+        }
+      });
+  
+      this.setState({
+        mainFile: folder.mainFile,
+      })
+    }
+  }
 
   //  readURL = (input: { files: Blob[]; }) => {
   //       if (input.files && input.files[0]) {
@@ -316,10 +391,11 @@ class ModalUploadDocumentComponent extends React.Component<
               type="text"
               value={this.state.bagId}
               maxlength={22}
-              onIonChange={e =>
+              onIonChange={e => 
                 this.setState({
                   bagId: (e.target as HTMLInputElement).value,
                 })
+                
               }
             />
           </IonItem>
@@ -375,16 +451,18 @@ class ModalUploadDocumentComponent extends React.Component<
             </IonItem>
           */ }
           {this.props.platform === 'web' ? (
-            
+            <div className="attestation-step-file">
             <div
               className={`drop-area ${!!this.state.folder ? '' : ''}`}
             >
-              <textarea ref={this.saveRef} className="attestation-step-file"/>
+              <textarea ref={this.saveRef}/>
                 <span className="img-upload">
                   <IonIcon icon={documentIcon} size="large" />
-                  <p>Drag and Drop your file</p>
+                  <p>Drag and Drop your files</p>
                 </span>
               </div>
+              <input className="FileSelectButton" accept="image/png,image/jpg,image/jpeg" title="Browse" type="file" onChange={this.onFileChange}></input>
+            </div>
           ) : (
             undefined
           )}
@@ -500,9 +578,13 @@ class ModalUploadDocumentComponent extends React.Component<
             <IonItem>
               <IonButton
                 className="attestation-step-upload AddButton"
-                disabled={!this.state.folder || !this.state.bagId || !this.state.mainFile}
+                disabled={this.state.isUploading || !this.state.folder || !this.state.bagId}
                 onClick={() => {
                   this.props.setIsOpen(false);
+                  this.setState({
+                    ...this.state,
+                    isUploading: true,
+                  })
                   this.props.upload(
                     this.state.bagId,
                     this.state.folder as Folder,
@@ -516,6 +598,7 @@ class ModalUploadDocumentComponent extends React.Component<
                 Upload
               </IonButton>
               <IonButton
+                disabled={this.state.isUploading}
                 className="AddButton"
                 onClick={() => {
                   this.setState({ folder: undefined });

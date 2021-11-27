@@ -61,6 +61,10 @@ const MarketItemComponent: React.FC<MarketItemProps> = (
   const { /*isOpen,*/ currentStep, /* steps,*/ setIsOpen, setCurrentStep /*, setSteps*/ } = useTour()
   //const history = useHistory();
   const priceInput = React.useRef<HTMLIonInputElement | null>(null);
+
+  const [isPurchasing, setIsPurchasing] = useState<boolean>(false);
+  const [isSelling, setIsSelling] = useState<boolean>(false);
+
   const [price, setPrice] = useState<number>();
 
   console.log(props.folder);
@@ -92,10 +96,10 @@ const MarketItemComponent: React.FC<MarketItemProps> = (
           <IonCardHeader>
             <IonCardSubtitle>
                 <IonLabel className="ion-text-wrap">
-                  <h2>{bagIdFromAddress(props.id)}</h2>
+                  <h1>{bagIdFromAddress(props.id)}</h1>
                 </IonLabel>
             </IonCardSubtitle>
-            <IonCardTitle>
+            <IonCardTitle className="MarketItemInfo">
                 {!props.awaitsSignature && (
                   <IonGrid>
                     <IonRow>
@@ -106,7 +110,7 @@ const MarketItemComponent: React.FC<MarketItemProps> = (
                     <IonRow>
                     <IonIcon  icon={checkmarkCircle} color="success" />
                     <IonLabel className="ion-text-wrap">
-                      <h2>Attested</h2>
+                      <h3>Attested</h3>
                     </IonLabel>
                     </IonRow>
                   </IonGrid>
@@ -146,9 +150,11 @@ const MarketItemComponent: React.FC<MarketItemProps> = (
                 undefined
               ) : (
                 <IonButton
+                  disabled={isPurchasing}
                   className="PurchaseButton"
                   onClick={() => {
                     setIsOpen(false);
+                    setIsPurchasing(true);
                     props.purchase(
                       props.registryUri,
                       bagIdFromAddress(props.id),
@@ -188,15 +194,18 @@ const MarketItemComponent: React.FC<MarketItemProps> = (
                     }
                   />
                   <IonButton
-                  
+                  disabled={isSelling}
                   className="SellButton"
                   onClick={() => {
+                    setIsSelling(true);
                     setIsOpen(false);
+
                     props.sell(
                       props.registryUri,
                       bagIdFromAddress(props.id),
                       price || 3000000000
                     );
+                    
                   }}
                 >
                   Sell for {(price || 3000000000) * (1 / 100000000)} REV

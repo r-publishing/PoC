@@ -19,4 +19,11 @@ ion-toolbar {
 .title {
   color: white;
   cursor: pointer;
+  padding-inline: 10px;
+}
+
+.RPCLogo {
+  width:32px;
+  height:32px;
+  margin-left: 0.5em;
 }

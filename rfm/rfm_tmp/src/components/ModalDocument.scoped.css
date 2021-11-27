@@ -7,7 +7,7 @@
 }
 @media screen and (min-width: 768px) {
   .modal-document {
-    width: 50vw;
+    /* width: 50vw; */
     margin: 0 auto;
   }
 }
@@ -58,7 +58,6 @@
 }
 
 .FloatingBottomLeft {
-  position: fixed;
   z-index: 100;
   bottom: 0;
   left: 0;
@@ -94,10 +93,11 @@
   padding: 0.6em;
   margin-top: 2em;
   min-width: 8em;
-  max-width: 22em;
+  max-width: 26em;
 }
 
 .Image {
+  max-height: 26em;
   padding: 0.4em;
 }
 

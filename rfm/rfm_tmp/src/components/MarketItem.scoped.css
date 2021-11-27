@@ -83,9 +83,13 @@ ion-item ion-note.md {
   margin-right: 14px;
 }
 
+.MarketItemInfo {
+  font-style: italic;
+}
+
 .IconContainer {
-  margin: 1em;
   display: flex;
+  justify-content: center;
 }
 
 .ImageFrame {
@@ -97,11 +101,12 @@ ion-item ion-note.md {
 .ImageFrame.main {
   padding: 0.6em;
   min-width: 12em;
-  max-width: 22em;
+  max-width: 26em;
 }
 
 .Image {
   padding: 0.4em;
+  max-height: 26em;
 }
 
 .ion-text-wrap {

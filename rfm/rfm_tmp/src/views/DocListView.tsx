@@ -88,25 +88,21 @@ const DockListViewComponent: React.FC<DockListViewProps> = props => {
 
   const { /* isOpen, currentStep, steps,*/ setIsOpen, setCurrentStep, setSteps } = useTour()
   useEffect(() => {
-    
-
-    if (props.user === "publisher") {
+    const menuTourStep = parseInt(localStorage.getItem('tour') || '0');
+    if (props.user === "publisher" && menuTourStep <= 2 && !props.bagId) {
       setSteps(componentSteps);
       if (localStorage.getItem('tour')) {
-        const menuTourStep = parseInt(localStorage.getItem('tour') || '0');
-        if (menuTourStep <= 2) {
+        
+
           setTimeout(() => {
             setIsOpen(false);
             setCurrentStep(menuTourStep);
             setIsOpen(true);
           }, 100);
-        }
-        else {
-          setIsOpen(false);
-        }
+
       }
     }
-    if (props.user === "attestor") {
+    if (props.user === "attestor" && !props.bagId) {
       setSteps(attestSteps);
       setTimeout(() => {
         setIsOpen(false);
@@ -114,6 +110,7 @@ const DockListViewComponent: React.FC<DockListViewProps> = props => {
         setIsOpen(true);
       }, 100)
     }
+    setIsOpen(false);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   //const identity = localStorage.getItem('publisher');

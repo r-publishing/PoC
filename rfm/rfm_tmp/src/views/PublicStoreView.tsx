@@ -48,7 +48,7 @@ interface PublicDocumentView {
 
 const purchaseSteps = [
   { selector: '.MarketCard', content: 'The NFT is now for sale.' },
-  { selector: '.PurchaseButton', content: 'Press this button to purchase this NFT.' },
+  { selector: '.PurchaseButton', content: 'Press the "Buy" button to purchase this NFT.' },
 ]
 
 const purchasedSteps = [
@@ -57,7 +57,7 @@ const purchasedSteps = [
 ]
 
 const purchased2Steps = [
-  { selector: '.MarketCard', content: 'Congratulations! You now own this NFT!' },
+  { selector: '.MarketCard', content: 'Congratulations! You now own this NFT! This concludes our demo.' },
 ]
 
 const PublicStoreComponent: React.FC<PublicDocumentView> = props => {
@@ -97,7 +97,7 @@ const PublicStoreComponent: React.FC<PublicDocumentView> = props => {
       setIsOpen(true);
       setTimeout(() => {
         setCurrentStep(1);
-      }, 5000)
+      }, 6000)
     }, 100)
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

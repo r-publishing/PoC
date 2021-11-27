@@ -72,21 +72,21 @@ const attestSteps = [
 ]
 
 const publisherSteps = [
-  { selector: '.attestation-step-file', content: 'Pick a photo you wish to upload.' },
+  { selector: '.attestation-step-file', content: 'Pick a photo you wish to upload. Image data will be stored on-chain in an encrypted form.' },
   //{ selector: '.attestation-step-main-file', content: 'Set your photo as your main file.' },
-  { selector: '.attestation-step-name', content: 'Choose a name for your NFT.' },
+  { selector: '.attestation-step-name', content: 'Choose a name for your new NFT.' },
   //{ selector: '.attestation-step-select-attestor', content: 'Click here and appoint an attestor.',
     //highlightedSelectors: ["ionic-selectable-modal.ion-page"],
     //mutationObservables: ["ion-modal.show-modal.modal-interactive"]
   //},
-  { selector: '.attestation-step-upload', content: 'Now press upload to begin attestation process.' },
-  { selector: '.attestation-step-set-price', content: "How much REV do you think it's worth? Probably not a lot but let's put a large number anyway." },
+  { selector: '.attestation-step-upload', content: 'Now press upload to begin the attestation process.' },
+  { selector: '.attestation-step-set-price', content: "How much do you think this is worth? Probably not a lot so we're just going to put a small number for you." },
 ]
 
 const publishSteps = [
-  { selector: '.attestation-step-set-price', content: "How much do you think it is worth? Probably not a lot but let's put a large number anyway." },
-  { selector: '.attestation-step-set-price', content: "Come on now... don't be greedy!" },
-  { selector: '.attestation-step-do-publish', content: "Now press it. Press it for glory!." },
+  { selector: '.attestation-step-set-price', content: "How much do you think this is worth? Probably not a lot so we're just going to put a small number for you." },
+  { selector: '.attestation-step-set-price', content: "Come on now..." },
+  { selector: '.attestation-step-do-publish', content: "Now press it to mint your first NFT. Image data will be stored on-chain unencrypted." },
 ]
 
 
@@ -101,6 +101,8 @@ const ModalDocumentComponent: React.FC<ModalDocumentProps> = (
 
   //const [numPages, setNumPages] = useState<number>();
   const [price, setPrice] = useState<number>();
+  const [isAttesting, setIsAttesting] = useState<boolean>(false);
+  const [isPublishing, setIsPublishing] = useState<boolean>(false);
   /*
   const [recipientInput, setRecipientInput] = useState<string>();
   const [revAddresses, setRevAddresses] = useState<Map<string, string>>(new Map<string, string>([
@@ -135,13 +137,14 @@ const ModalDocumentComponent: React.FC<ModalDocumentProps> = (
 */
 
   useEffect(() => {
-    
+   
     setTimeout(() => {
       if (props.user === "publisher") {
         if (localStorage.getItem('tour')) {
           const menuTourStep = parseInt(localStorage.getItem('tour') || '0');
           if (menuTourStep === 0) {
             setTimeout(() => {
+              console.info("setSteps(publisherSteps);");
               setIsOpen(false);
               setSteps(publisherSteps);
               setCurrentStep(0);
@@ -150,19 +153,21 @@ const ModalDocumentComponent: React.FC<ModalDocumentProps> = (
           }
           if (menuTourStep === 2) {
             setTimeout(() => {
+              console.info("setSteps(publishSteps);");
               setIsOpen(false);
               setSteps(publishSteps);
               setCurrentStep(0);
               setIsOpen(true);
               if (priceInput && priceInput.current) {
                 console.info("SET PRICE");
-                (priceInput.current as HTMLIonInputElement).value = 20;
+                //(priceInput.current as HTMLIonInputElement).value = 20;
+                setPrice(20);
                 (priceInput.current as HTMLIonInputElement).setFocus();
                 setTimeout(() => {
                   setCurrentStep(2);
                   console.info("currentStep: ");
                   console.info(currentStep);
-                }, 6000);
+                }, 5000);
               }
             }, 100);
           }
@@ -171,20 +176,19 @@ const ModalDocumentComponent: React.FC<ModalDocumentProps> = (
           //}
         }
         else {
-        setSteps(publisherSteps);
+          setSteps(publisherSteps);
+          setIsOpen(true);
+          console.info("setSteps(publishSteps);");
         }
       }
       if (props.user === "attestor") {
         setSteps(attestSteps);
-      }
-      setTimeout(() => {
-        setIsOpen(false);
-        setCurrentStep(0);
         setIsOpen(true);
-      }, 888)
+      }
+
     }, 100);
     
-
+    setIsOpen(false);
     props.loadBag(props.registryUri, props.bagId, props.state);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -484,10 +488,12 @@ const ModalDocumentComponent: React.FC<ModalDocumentProps> = (
               */}
 
               <IonButton
+                disabled={isPublishing}
                 className="attestation-step-do-publish SignatureRequiredBtn"
                 size="default"
                 onClick={() => {
                   setIsOpen(false);
+                  setIsPublishing(true);
                   props.publish(props.registryUri, props.bagId, price || 0, [...payees.values()]);
                 }}
               >
@@ -499,10 +505,12 @@ const ModalDocumentComponent: React.FC<ModalDocumentProps> = (
           )}
           {[undefined, '0'].includes(lastSignature) && (
             <IonButton
+              disabled={isAttesting}
               className="SignatureRequiredBtn"
               size="default"
               onClick={() => {
                 setIsOpen(false);
+                setIsAttesting(true);
                 props.reupload(props.registryUri, props.bagId);
               }}
             >

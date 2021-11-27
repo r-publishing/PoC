@@ -1,7 +1,7 @@
 import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
 import * as rchainToolkit from 'rchain-toolkit';
-import React, { useEffect /*, useState, Suspense, useEffect */ } from 'react';
+import React, { useEffect, useState /*,  Suspense, useEffect */ } from 'react';
 //import { useHistory } from 'react-router';
 //import { Link } from 'react-router-dom';
 //import Swal from 'sweetalert2';
@@ -10,10 +10,11 @@ import {
   IonContent,
   //IonItem,
   //IonInput,
-  //IonLabel,
+  IonLabel,
   IonButton,
   IonSlides,
   IonSlide,
+  IonSpinner,
   //IonGrid,
   //IonRow,
   //IonCol,
@@ -70,6 +71,7 @@ interface Demo {
 
 interface LoginViewProps {
   platform: string;
+  isLoading: boolean;
   action: string;
   init: (a: {
     registryUri: string;
@@ -84,22 +86,31 @@ interface LoginViewProps {
 const LoginViewComponent: React.FC<LoginViewProps> = props => {
   const { setIsOpen, setCurrentStep, setSteps, currentStep } = useTour();
 
+  const [isUser, setUser] = useState<boolean>(false);
+
+  const slides = React.useRef<HTMLIonSlidesElement | null>(null);
+
   useEffect(() => {
+    slides.current?.lockSwipes(true);
+
     if (!localStorage.getItem('tour')) {
       localStorage.setItem('tour', currentStep.toString());
     }
     const menuTourStep = parseInt(localStorage.getItem('tour') || '0');
     setSteps(publishSteps);
     setTimeout(() => {
-      setCurrentStep(menuTourStep);
-      //setCurrentStep(0);
-      setIsOpen(true);
+      if (props.demo && Object.keys(props.demo || {}).length > 0) {
+        setCurrentStep(menuTourStep);
+        //setCurrentStep(0);
+        setIsOpen(true);
+      }
     }, 100);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handlePublisherLogin = () => {
     //localStorage.removeItem('user');
+    
     localStorage.setItem('user', 'publisher');
     localStorage.setItem('publisher', 'true');
     
@@ -115,6 +126,7 @@ const LoginViewComponent: React.FC<LoginViewProps> = props => {
 
   const handleAttestorLogin = async () => {
     //localStorage.removeItem('user');
+    
     localStorage.removeItem('publisher');
     localStorage.setItem('user', 'attestor');
 
@@ -128,6 +140,7 @@ const LoginViewComponent: React.FC<LoginViewProps> = props => {
   };
 
   const handleStoreLoginAsAlice = async () => {
+    
     localStorage.setItem('user', 'buyer');
     localStorage.removeItem('wallet');
 
@@ -141,6 +154,7 @@ const LoginViewComponent: React.FC<LoginViewProps> = props => {
   }
 
    const handleStoreLoginAsBob = async () => {
+    
      localStorage.setItem('user', 'buyer2');
      //localStorage.setItem('wallet', 'true');
      localStorage.removeItem('wallet');
@@ -155,6 +169,7 @@ const LoginViewComponent: React.FC<LoginViewProps> = props => {
    };
 
    const handleUserLoginAsAlice = async () => {
+    
     localStorage.setItem('user', 'buyer');
     localStorage.setItem('wallet', 'true');
 
@@ -168,6 +183,7 @@ const LoginViewComponent: React.FC<LoginViewProps> = props => {
   };
 
   const handleUserLoginAsBob = async () => {
+    
     localStorage.setItem('user', 'buyer2');
     localStorage.setItem('wallet', 'true');
 
@@ -182,7 +198,7 @@ const LoginViewComponent: React.FC<LoginViewProps> = props => {
 
   return (
     <IonContent>
-      <IonSlides>
+      <IonSlides ref={slides}>
         <IonSlide>
           <React.Fragment>
             <div className="login">
@@ -192,7 +208,9 @@ const LoginViewComponent: React.FC<LoginViewProps> = props => {
                 {/* Publisher */}
                 <div className="LoadButtonDiv">
                   <IonButton
+                    disabled={isUser || Object.keys(props.demo || {}).length === 0}
                     onClick={async () => {
+                      setUser(true);
                       handlePublisherLogin();
                     }}
                     className="btn attestation-step-start"
@@ -203,7 +221,9 @@ const LoginViewComponent: React.FC<LoginViewProps> = props => {
                 {/* Attestor */}
                 <div className="LoadButtonDiv">
                   <IonButton
+                    disabled={isUser || Object.keys(props.demo || {}).length === 0}
                     onClick={async () => {
+                      setUser(true);
                       handleAttestorLogin();
                     }}
                     className="btn attestation-step-attest"
@@ -214,7 +234,9 @@ const LoginViewComponent: React.FC<LoginViewProps> = props => {
                 {/* Reseller */}
                 <div className="LoadButtonDiv">
                   <IonButton
+                    disabled={isUser || Object.keys(props.demo || {}).length === 0}
                     onClick={async () => {
+                      setUser(true);
                       handleStoreLoginAsAlice();
                     }}
                     className="attestation-step-alice-marketplace"
@@ -225,7 +247,9 @@ const LoginViewComponent: React.FC<LoginViewProps> = props => {
                 {/* Reseller */}
                 <div className="LoadButtonDiv">
                   <IonButton
+                    disabled={isUser || Object.keys(props.demo || {}).length === 0}
                     onClick={async () => {
+                      setUser(true);
                       handleStoreLoginAsBob();
                     }}
                     className="attestation-step-bob-marketplace"
@@ -236,7 +260,9 @@ const LoginViewComponent: React.FC<LoginViewProps> = props => {
                 {/* wallet*/}
                 <div className="LoadButtonDiv">
                   <IonButton
+                    disabled={isUser || Object.keys(props.demo || {}).length === 0}
                     onClick={async () => {
+                      setUser(true);
                       handleUserLoginAsAlice();
                     }}
                     className="btn attestation-step-alice-inventory"
@@ -247,7 +273,9 @@ const LoginViewComponent: React.FC<LoginViewProps> = props => {
                 {/* wallet*/}
                 <div className="LoadButtonDiv">
                   <IonButton
+                    disabled={isUser || Object.keys(props.demo || {}).length === 0}
                     onClick={async () => {
+                      setUser(true);
                       handleUserLoginAsBob();
                     }}
                     className="btn attestation-step-bob-inventory"
@@ -260,6 +288,12 @@ const LoginViewComponent: React.FC<LoginViewProps> = props => {
           </React.Fragment>
         </IonSlide>
       </IonSlides>
+      { (!props.demo || Object.keys(props.demo || {}).length === 0) && 
+        <div className="DebugInfo">
+        <IonLabel>[!!] Failed to fetch a fresh set of demo credentials from our API :(</IonLabel>
+        <IonLabel>NOTE: Please reload the page and try again, or contact us at info@r-publishing.com for assistance.</IonLabel>
+        </div>
+      }
     </IonContent>
   );
 };
@@ -267,6 +301,7 @@ export const LoginView = connect(
   (state: HistoryState) => {
     return {
       platform: getPlatform(state),
+      isLoading: state.reducer.isLoading
     };
   },
   (dispatch: Dispatch) => {

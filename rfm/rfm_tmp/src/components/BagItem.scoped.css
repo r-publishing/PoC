@@ -65,6 +65,8 @@ ion-item ion-note.md {
 
 .IconContainer {
   margin: 1em;
+  display: flex;
+  justify-content: center;
 }
 
 .ion-text-wrap {

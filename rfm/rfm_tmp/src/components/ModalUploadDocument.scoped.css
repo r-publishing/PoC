@@ -50,7 +50,7 @@ h3 {
 }
 
 ion-button.AddButton {
-  border-radius: 5px;
+  border-radius: 3px;
   border-color: var(--ion-color-primary);
   --box-shadow: none;
   color: var(--ion-background-color);
@@ -134,4 +134,8 @@ ion-button.AddButton {
   grid-row: 1;
   grid-column: 2;
   color: #bbb;
+}
+
+.FileSelectButton {
+  margin: 1.2em;
 }

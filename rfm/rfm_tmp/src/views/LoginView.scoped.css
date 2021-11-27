@@ -62,5 +62,12 @@ div.BottomBar {
   --background: #fff;
 }
 
-
-
+.DebugInfo {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  margin: 1em;
+  display: flex;
+  flex-direction: column;
+  text-align: right;
+}
