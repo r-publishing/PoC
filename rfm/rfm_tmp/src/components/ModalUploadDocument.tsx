@@ -359,7 +359,6 @@ class ModalUploadDocumentComponent extends React.Component<
   //   }
 
   render() {
-    console.log(this.state);
     return (
       <IonContent class="modal-document">
         <IonTitle class="upload-to-the-blockchain">
@@ -525,7 +524,7 @@ class ModalUploadDocumentComponent extends React.Component<
               <IonLabel className="label">Main file:</IonLabel>
              
                 {Object.keys(this.state?.files || {}).map(filename => {
-                    return(<IonRadioGroup value={this.state.mainFile} onIonChange={e => {
+                    return(<IonRadioGroup key={filename} value={this.state.mainFile} onIonChange={e => {
                       setTimeout( () => {
                         this.props.setCurrentStep(this.props.currentStep + 1);
                       }, 100);

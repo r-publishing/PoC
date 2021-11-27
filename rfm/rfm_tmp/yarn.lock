@@ -12258,8 +12258,9 @@ raw-body@2.4.0:
     iconv-lite "0.4.24"
     unpipe "1.0.0"
 
-"rchain-did-resolver@file:.yalc/rchain-did-resolver":
+"rchain-did-resolver@https://github.com/r-publishing/rchain-did-resolver.git":
   version "2.1.2"
+  resolved "https://github.com/r-publishing/rchain-did-resolver.git#3b7ac7eb172aa8119a664ee3bb4840452263002d"
   dependencies:
     elliptic "^6.5.4"
     pako "^2.0.3"
